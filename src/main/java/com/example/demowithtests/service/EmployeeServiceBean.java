@@ -31,6 +31,8 @@ public class EmployeeServiceBean implements EmployeeService {
     @PersistenceContext
     private EntityManager entityManager;
 
+
+
     @Override
    // @Transactional(propagation = Propagation.MANDATORY)
     public Employee create(Employee employee) {
@@ -244,4 +246,44 @@ public class EmployeeServiceBean implements EmployeeService {
     public List<Employee> filterByCountry(String country) {
         return employeeRepository.findByCountry(country);
     }
+
+    @Override
+    public List<Employee> findAllByEmailIsNull() {
+
+            return employeeRepository.findAllByEmailIsNull()
+                    .stream()
+                    .filter(e -> !e.isDeleted())
+                    .collect(Collectors.toList());
+
+
+    }
+    @Override
+    public List<Employee> findAllWithSyntaxErorr(){
+
+        List<Employee> allEmp = employeeRepository.findAll();
+       List<Employee> resultList = new ArrayList<>();
+
+        for(Employee e : allEmp){
+            String country = e.getCountry();
+            if(isLowerCase(country)){
+               e.setCountry(capitalizeString(country));
+               resultList.add(e);
+               employeeRepository.save(e);
+            }
+        }
+        return resultList;
+    }
+
+    public boolean isLowerCase(String str) {
+        return str.equals(str.toLowerCase());
+    }
+    public String capitalizeString(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+
+        String correctedString = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+        return correctedString;
+    }
+
 }

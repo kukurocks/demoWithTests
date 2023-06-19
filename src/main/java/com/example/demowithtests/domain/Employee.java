@@ -14,14 +14,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class Employee {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String email;
     private String country;
-    private boolean deleted;
+    private  Boolean deleted;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "employee_id")
@@ -78,11 +77,11 @@ public class Employee {
         this.gender = gender;
     }
 
-    public boolean isDeleted() {
+    public Boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 }

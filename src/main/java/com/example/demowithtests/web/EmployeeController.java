@@ -143,6 +143,19 @@ public class EmployeeController {
         return employeeService.findEmails();
     }
 
+    @GetMapping("/emails")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Employee> getAllUsersWithoutEmail(){
+        return employeeService.findAllByEmailIsNull();
+    }
+
+
+    @GetMapping("/country")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Employee> findAllCountry(){
+        return employeeService.findAllWithSyntaxErorr();
+    }
+
     @GetMapping("/users/countryBy")
     @ResponseStatus(HttpStatus.OK)
     public List<Employee> getByCountry(@RequestParam(required = true) String country) {

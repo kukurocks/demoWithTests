@@ -1,10 +1,9 @@
 package com.example.demowithtests;
 
 import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.repository.Repository;
-import com.example.demowithtests.service.Service;
-import com.example.demowithtests.service.ServiceBean;
-import org.junit.Test;
+import com.example.demowithtests.repository.EmployeeRepository;
+import com.example.demowithtests.service.EmployeeServiceBean;
+import org.testng.annotations.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -24,10 +23,10 @@ import static org.mockito.Mockito.when;
 public class ServiceTests {
 
     @Mock
-    private Repository repository;
+    private EmployeeRepository repository;
 
     @InjectMocks
-    private ServiceBean service;
+    private EmployeeServiceBean service;
 
     @Test
     public void whenSaveEmployee_shouldReturnEmployee() {
@@ -55,7 +54,7 @@ public class ServiceTests {
         verify(repository).findById(employee.getId());
     }
 
-    @Test(expected = EntityNotFoundException.class)
+   @Test(expectedExceptions = EntityNotFoundException.class)
     public void should_throw_exception_when_employee_doesnt_exist() {
         Employee employee = new Employee();
         employee.setId(89);

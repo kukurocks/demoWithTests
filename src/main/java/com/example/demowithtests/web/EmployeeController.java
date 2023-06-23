@@ -1,10 +1,11 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
-import com.example.demowithtests.util.config.EmployeeConverter;
+import com.example.demowithtests.util.config.swagger.EmployeeMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,7 +32,6 @@ import java.util.Optional;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final EmployeeConverter converter;
 
     //Операция сохранения юзера в базу данных
     @PostMapping("/users")
@@ -42,10 +42,10 @@ public class EmployeeController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
             @ApiResponse(responseCode = "409", description = "Employee already exists")})
-    public EmployeeDto saveEmployee(@RequestBody @Valid EmployeeDto requestForSave) {
+    public EmployeeReadDto saveEmployee(@RequestBody @Valid EmployeeDto requestForSave) {
 
-        var employee = converter.getMapperFacade().map(requestForSave, Employee.class);
-        var dto = converter.toDto(employeeService.create(employee));
+        var employee = EmployeeMapper.INSTANCE.fromDto(requestForSave);
+        var dto = EmployeeMapper.INSTANCE.toReadDto(employeeService.create(employee));
 
         return dto;
     }
@@ -60,8 +60,10 @@ public class EmployeeController {
     //Получение списка юзеров
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    public List<Employee> getAllUsers() {
-        return employeeService.getAll();
+    public List<EmployeeReadDto> getAllUsers() {
+
+
+        return EmployeeMapper.INSTANCE.toListReadDto(employeeService.getAll());
     }
 
     @GetMapping("/users/p")
@@ -86,7 +88,7 @@ public class EmployeeController {
         log.debug("getEmployeeById() EmployeeController - start: id = {}", id);
         var employee = employeeService.getById(id);
         log.debug("getById() EmployeeController - to dto start: id = {}", id);
-        var dto = converter.toReadDto(employee);
+        var dto = EmployeeMapper.INSTANCE.toReadDto(employee);
         log.debug("getEmployeeById() EmployeeController - end: name = {}", dto.name);
         return dto;
     }
@@ -94,9 +96,16 @@ public class EmployeeController {
     //Обновление юзера
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee refreshEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
+    public EmployeeReadDto refreshEmployee(@PathVariable("id") Integer id, @RequestBody EmployeeDto employeeDto) {
+        Employee employee = employeeService.getById(id);
+        Employee updateEmployee = EmployeeMapper.INSTANCE.fromDto(employeeDto);
 
-        return employeeService.updateById(id, employee);
+            employeeService.updateGenderById(employee.getId(),updateEmployee.getGender());
+            employeeService.updateCountryById(employee.getId(),updateEmployee.getCountry());
+            employeeService.updateEmailById(employee.getId(), updateEmployee.getEmail());
+            employeeService.updateNameById(employee.getId(),updateEmployee.getName());
+
+        return EmployeeMapper.INSTANCE.toReadDto(employee);
     }
 
     //Удаление по id
@@ -145,15 +154,21 @@ public class EmployeeController {
 
     @GetMapping("/emails")
     @ResponseStatus(HttpStatus.OK)
-    public List<Employee> getAllUsersWithoutEmail(){
-        return employeeService.findAllByEmailIsNull();
+    public List<EmployeeReadDto> getAllUsersWithoutEmail(){
+        List<Employee> findallbyemailisnull = employeeService.findAllByEmailIsNull();
+
+        return   EmployeeMapper.INSTANCE.toListReadDto(findallbyemailisnull);
+
     }
 
 
     @GetMapping("/country")
     @ResponseStatus(HttpStatus.OK)
-    public List<Employee> findAllCountry(){
-        return employeeService.findAllWithSyntaxErorr();
+    public List<EmployeeReadDto> findAllCountry(){
+
+        List<Employee> allWithSyntaxErorr = employeeService.findAllWithSyntaxErorr();
+
+        return EmployeeMapper.INSTANCE.toListReadDto(allWithSyntaxErorr);
     }
 
     @GetMapping("/users/countryBy")

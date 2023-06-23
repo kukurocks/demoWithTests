@@ -1,6 +1,5 @@
 package com.example.demowithtests.dto;
 
-import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -32,10 +31,6 @@ public class EmployeeDto {
     public String email;
 
     public Instant startDate = Instant.now();
-
-    //public Set<AddressDto> addresses = new HashSet<>();
-
     public Gender gender;
-
-    public Set<AddressDto> addresses = new HashSet<>();
+    public Set<AddressRequestDto> addresses = new HashSet<>();
 }

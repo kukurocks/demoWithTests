@@ -24,10 +24,6 @@ public class EmployeeReadDto {
     @NotNull
     public String email;
 
-    public Set<AddressDto> addresses = new HashSet<>();
-
-    //todo: dfhgjkdfhg Jira - 5544
-    public Date date = Date.from(Instant.now());
-
+    public Set<AddressResponseDto> addresses = new HashSet<>();
     public Gender gender;
 }

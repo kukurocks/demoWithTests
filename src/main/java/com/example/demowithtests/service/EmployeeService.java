@@ -1,6 +1,7 @@
 package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.Gender;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,6 +21,10 @@ public interface EmployeeService {
     Employee getById(Integer id);
 
     Employee updateById(Integer id, Employee plane);
+    Optional<Employee> updateNameById(Integer id, String name);
+    Optional<Employee> updateEmailById(Integer id, String email);
+    Optional<Employee> updateCountryById(Integer id, String country);
+    Optional<Employee> updateGenderById(Integer id, Gender gender);
 
     void removeById(Integer id);
 

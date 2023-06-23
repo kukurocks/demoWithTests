@@ -2,6 +2,8 @@ package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.Gender;
+import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.repository.EmployeeRepository;
 import com.example.demowithtests.util.exception.ListEmptyException;
 import com.example.demowithtests.util.exception.ResourceNotFoundException;
@@ -81,6 +83,65 @@ public class EmployeeServiceBean implements EmployeeService {
         }
         return employee;
     }
+
+    @Override
+    public Optional<Employee> updateNameById(Integer id, String name) {
+        if (name == null) {
+            return Optional.empty(); // Return an empty Optional if name is null
+        }
+        return employeeRepository.findById(id)
+                .map(entity -> {
+                    entity.setName(name);
+                    return employeeRepository.save(entity);
+                });
+    }
+
+    @Override
+    public Optional<Employee> updateEmailById(Integer id, String email) {
+        if (email == null) {
+            return Optional.empty(); // Return an empty Optional if email is null
+        }
+        return employeeRepository.findById(id)
+                .map(entity -> {
+                    entity.setEmail(email);
+                    return employeeRepository.save(entity);
+                });
+    }
+
+    @Override
+    public Optional<Employee> updateCountryById(Integer id, String country) {
+
+        if (country == null) {
+            return Optional.empty(); // Return an empty Optional if country is null
+        }
+        return employeeRepository.findById(id)
+                .map(entity -> {
+                    entity.setCountry(country);
+                    Set<Address> addresses = entity.getAddresses();
+                   for(Address address: addresses){
+                       address.setId(address.getId());
+                       address.setAddressHasActive(address.getAddressHasActive());
+                       address.setCountry(entity.getCountry());
+                       address.setCity(address.getCity());
+                       address.setStreet(address.getStreet());
+                   }
+                    return employeeRepository.save(entity);
+                });
+    }
+
+    @Override
+    public Optional<Employee> updateGenderById(Integer id, Gender gender) {
+
+        if (gender == null) {
+            return Optional.empty(); // Return an empty Optional if gender is null
+        }
+        return employeeRepository.findById(id)
+                .map(entity -> {
+                    entity.setGender(gender);
+                    return employeeRepository.save(entity);
+                });
+    }
+
 
     @Override
     public Employee updateById(Integer id, Employee employee) {
@@ -255,7 +316,6 @@ public class EmployeeServiceBean implements EmployeeService {
                     .filter(e -> !e.isDeleted())
                     .collect(Collectors.toList());
 
-
     }
     @Override
     public List<Employee> findAllWithSyntaxErorr(){
@@ -264,12 +324,27 @@ public class EmployeeServiceBean implements EmployeeService {
        List<Employee> resultList = new ArrayList<>();
 
         for(Employee e : allEmp){
+            if(!e.isDeleted()||e.getCountry()!=null){
             String country = e.getCountry();
             if(isLowerCase(country)){
                e.setCountry(capitalizeString(country));
-               resultList.add(e);
-               employeeRepository.save(e);
+                }
+            Set<Address> addresses = e.getAddresses();
+            if(!addresses.isEmpty()){
+                for(Address address:addresses){
+                    String country1 = address.getCountry();
+                    if(country1!=null){
+                        if(isLowerCase(country1)){
+                        address.setCountry(capitalizeString(country1));
+                    }
+                    }
+                }
             }
+
+                resultList.add(e);
+               employeeRepository.save(e);
+
+        }
         }
         return resultList;
     }

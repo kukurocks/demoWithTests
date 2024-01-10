@@ -1,7 +1,6 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
@@ -30,10 +29,11 @@ import java.util.Optional;
 @Slf4j
 @Tag(name = "Employee", description = "Employee API")
 public class EmployeeController {
+    private final EmployeeMapper mapper;
 
     private final EmployeeService employeeService;
 
-    //Операция сохранения юзера в базу данных
+    //save user in db
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "This is endpoint to add a new employee.", description = "Create request to add a new employee.", tags = {"Employee"})
@@ -57,13 +57,13 @@ public class EmployeeController {
 
     }
 
-    //Получение списка юзеров
+    //get list of users
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     public List<EmployeeReadDto> getAllUsers() {
 
 
-        return EmployeeMapper.INSTANCE.toListReadDto(employeeService.getAll());
+        return mapper.toListReadDto(employeeService.getAll());
     }
 
     @GetMapping("/users/p")
@@ -75,7 +75,7 @@ public class EmployeeController {
         return employeeService.getAllWithPagination(paging);
     }
 
-    //Получения юзера по id
+    //get user by id
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "This is endpoint returned a employee by his id.", description = "Create request to read a employee by id", tags = {"Employee"})
@@ -93,19 +93,21 @@ public class EmployeeController {
         return dto;
     }
 
-    //Обновление юзера
+    //Update user
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public EmployeeReadDto refreshEmployee(@PathVariable("id") Integer id, @RequestBody EmployeeDto employeeDto) {
+    public EmployeeDto refreshEmployee(@PathVariable("id") Integer id, @RequestBody EmployeeDto employeeDto) {
+
         Employee employee = employeeService.getById(id);
-        Employee updateEmployee = EmployeeMapper.INSTANCE.fromDto(employeeDto);
+        Employee updateEmployee = mapper.fromDto(employeeDto);
 
-            employeeService.updateGenderById(employee.getId(),updateEmployee.getGender());
-            employeeService.updateCountryById(employee.getId(),updateEmployee.getCountry());
-            employeeService.updateEmailById(employee.getId(), updateEmployee.getEmail());
-            employeeService.updateNameById(employee.getId(),updateEmployee.getName());
 
-        return EmployeeMapper.INSTANCE.toReadDto(employee);
+        employeeService.updateGenderById(employee.getId(), updateEmployee.getGender());
+        employeeService.updateCountryById(employee.getId(), updateEmployee.getCountry());
+        employeeService.updateEmailById(employee.getId(), updateEmployee.getEmail());
+        employeeService.updateNameById(employee.getId(),updateEmployee.getName());
+
+        return mapper.toDto(employee);
     }
 
     //Удаление по id
@@ -155,10 +157,17 @@ public class EmployeeController {
     @GetMapping("/emails")
     @ResponseStatus(HttpStatus.OK)
     public List<EmployeeReadDto> getAllUsersWithoutEmail(){
-        List<Employee> findallbyemailisnull = employeeService.findAllByEmailIsNull();
+        List<Employee> list = employeeService.findAllByEmailIsNull();
 
-        return   EmployeeMapper.INSTANCE.toListReadDto(findallbyemailisnull);
+        return   EmployeeMapper.INSTANCE.toListReadDto(list);
 
+    }
+    @GetMapping("/emails/by")
+    @ResponseStatus(HttpStatus.OK)
+    public Employee getUserByEmail(@RequestParam(defaultValue = "n@gmail.com") String email){
+
+       var em = employeeService.findEmployeeByEmail(email);
+        return em;
     }
 
 

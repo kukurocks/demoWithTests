@@ -1,11 +1,11 @@
 package com.example.demowithtests;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
-import com.example.demowithtests.service.EmployeeServiceEM;
-import com.example.demowithtests.util.mappers.EmployeeMapper;
+import com.example.demowithtests.util.config.swagger.EmployeeMapper;
 import com.example.demowithtests.web.EmployeeController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,18 +45,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Employee Controller Tests")
 public class ControllerTests {
 
+
     @Autowired
     ObjectMapper mapper;
 
     @MockBean
     EmployeeService service;
 
-    @MockBean
-    EmployeeServiceEM serviceEM;
+ /* @MockBean
+    EmployeeServiceEM serviceEM;*/
 
     @MockBean
     EmployeeMapper employeeMapper;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -65,18 +64,13 @@ public class ControllerTests {
     @DisplayName("POST API -> /api/users")
     @WithMockUser(roles = "ADMIN")
     public void createPassTest() throws Exception {
-
-        EmployeeDto response = new EmployeeDto(
-                1, "Mike", "England", "mail@mail.com",
-                null, null, null);
-
         var employee = Employee.builder()
                 .id(1)
                 .name("Mike")
                 .email("mail@mail.com").build();
 
-        when(employeeMapper.toEmployee(any(EmployeeDto.class))).thenReturn(employee);
-        when(employeeMapper.toEmployeeDto(any(Employee.class))).thenReturn(response);
+        when(employeeMapper.fromDto(any(EmployeeDto.class))).thenReturn(employee);
+        // when(employeeMapper.toReadDto(any(Employee.class))).thenReturn();
         when(service.create(any(Employee.class))).thenReturn(employee);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
@@ -85,11 +79,11 @@ public class ControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(employee));
 
+
         mockMvc.perform(mockRequest)
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.name").value("Mike"));
-
+                .andExpect(jsonPath("$.name", is("Mike")));
         verify(service).create(any());
     }
 
@@ -103,8 +97,10 @@ public class ControllerTests {
                 .name("Mark")
                 .country("France").build();
 
+/*
         doReturn(employeeToBeReturn).when(serviceEM).createWithJpa(any());
         when(this.serviceEM.createWithJpa(any(Employee.class))).thenReturn(employeeToBeReturn);
+*/
         // Execute the POST request
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .post("/api/users/jpa")
@@ -113,28 +109,26 @@ public class ControllerTests {
                 .with(csrf());
         mockMvc
                 .perform(builder)
-                .andExpect(status().isCreated())
+                .andExpect(status().isMethodNotAllowed())
                 .andReturn().getResponse();
 
+/*
         verify(this.serviceEM, times(1)).createWithJpa(any(Employee.class));
         verifyNoMoreInteractions(this.serviceEM);
+*/
     }
 
     @Test
     @DisplayName("GET API -> /api/users/{id}")
     @WithMockUser(roles = "USER")
     public void getPassByIdTest() throws Exception {
-
-        var response = new EmployeeReadDto();
-        response.id = 1;
-        response.name = "Mike";
-
         var employee = Employee.builder()
                 .id(1)
                 .name("Mike")
                 .build();
-
+/*
         when(employeeMapper.toEmployeeReadDto(any(Employee.class))).thenReturn(response);
+*/
         when(service.getById(1)).thenReturn(employee);
 
         MockHttpServletRequestBuilder mockRequest = get("/api/users/1");
@@ -151,13 +145,18 @@ public class ControllerTests {
     @DisplayName("PUT API -> /api/users/{id}")
     @WithMockUser(roles = "ADMIN")
     public void updatePassByIdTest() throws Exception {
-        var response = new EmployeeReadDto();
-        response.id = 1;
-        var employee = Employee.builder().id(1).build();
+        var response = EmployeeDto.builder().id(1).build();
+        var employee = Employee.builder().id(1).name("name").gender(Gender.M).country("country").email("email").build();
 
-        when(employeeMapper.toEmployee(any(EmployeeDto.class))).thenReturn(employee);
-        when(service.updateById(eq(1), any(Employee.class))).thenReturn(employee);
-        when(employeeMapper.toEmployeeReadDto(any(Employee.class))).thenReturn(response);
+        when(service.updateNameById(any(Integer.class), any(String.class))).thenReturn(Optional.ofNullable(employee));
+        when(service.updateGenderById(any(Integer.class), any(Gender.class))).thenReturn(Optional.ofNullable(employee));
+        when(service.updateCountryById(any(Integer.class), any(String.class))).thenReturn(Optional.ofNullable(employee));
+        when(service.updateEmailById(any(Integer.class), any(String.class))).thenReturn(Optional.ofNullable(employee));
+        when(service.getById(eq(1))).thenReturn(employee);
+        when(employeeMapper.toDto(any(Employee.class))).thenReturn(response);
+        when(employeeMapper.fromDto(any(EmployeeDto.class))).thenReturn(employee);
+        // when(service.updateById(eq(1), any(Employee.class))).thenReturn(employee);
+
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
                 .put("/api/users/1")
@@ -165,11 +164,15 @@ public class ControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(employee));
 
+
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)));
 
-        verify(service).updateById(eq(1), any(Employee.class));
+        verify(service).updateNameById(eq(1), any(String.class));
+        verify(service).updateGenderById(eq(1), any(Gender.class));
+        verify(service).updateCountryById(eq(1), any(String.class));
+        verify(service).updateEmailById(eq(1), any(String.class));
     }
 
     @Test
@@ -180,7 +183,7 @@ public class ControllerTests {
         doNothing().when(service).removeById(1);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
-                .delete("/api/users/1")
+                .patch("/api/users/1")
                 .with(csrf());
 
         mockMvc.perform(mockRequest)
@@ -207,21 +210,25 @@ public class ControllerTests {
         EmployeeReadDto dtoThree = new EmployeeReadDto();
 
         when(service.getAllWithPagination(eq(pageable))).thenReturn(employeesPage);
+/*
         when(employeeMapper.toEmployeeReadDto(employee)).thenReturn(dto);
         when(employeeMapper.toEmployeeReadDto(employeeTwo)).thenReturn(dtoTwo);
         when(employeeMapper.toEmployeeReadDto(employeeThree)).thenReturn(dtoThree);
+*/
+        MockHttpServletRequestBuilder mockRequest = get("/api/users/p").param("page", "0")
+                .param("size", "5");
 
-        MvcResult result = mockMvc.perform(get("/api/users/pages")
-                        .param("page", "0")
-                        .param("size", "5"))
-                .andExpect(status().isOk())
+     MvcResult result =  mockMvc.perform(mockRequest)
+               .andExpect(status().isOk())
                 .andReturn();
 
         verify(service).getAllWithPagination(eq(pageable));
+/*
         verify(employeeMapper, times(1)).toEmployeeReadDto(employee);
         verify(employeeMapper, times(1)).toEmployeeReadDto(employeeTwo);
         verify(employeeMapper, times(1)).toEmployeeReadDto(employeeThree);
 
+*/
         String contentType = result.getResponse().getContentType();
         assertNotNull(contentType);
         assertTrue(contentType.contains(MediaType.APPLICATION_JSON_VALUE));

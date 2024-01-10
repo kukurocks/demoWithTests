@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,10 +41,12 @@ public class ServiceTests {
         employee = Employee
                 .builder()
                 .id(1)
+                .deleted(false)
                 .name("Mark")
                 .country("UK")
                 .email("test@mail.com")
                 .gender(Gender.M)
+                .addresses(new HashSet<>())
                 .build();
     }
 
@@ -63,6 +66,7 @@ public class ServiceTests {
 
         Employee employee = new Employee();
         employee.setId(88);
+        employee.setDeleted(false);
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
         Employee expected = service.getById(employee.getId());
         assertThat(expected).isSameAs(employee);
@@ -100,9 +104,8 @@ public class ServiceTests {
     @Test
     @DisplayName("Delete employee test")
     public void deleteEmployeeTest() {
-
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
         service.removeById(employee.getId());
-        verify(employeeRepository).delete(employee);
+        verify(employeeRepository).save(employee);
     }
 }

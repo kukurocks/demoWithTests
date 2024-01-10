@@ -18,6 +18,10 @@ public class ServiceExceptionHandler {
     protected ResponseEntity<MyExceptionHandler> handleUserNotFoundException() {
         return new ResponseEntity<>(new MyExceptionHandler("The user does not exist"), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(NonUniqueException.class)
+    protected ResponseEntity<MyExceptionHandler> handleNonUniqueException() {
+        return new ResponseEntity<>(new MyExceptionHandler("Employees by this email more than one"), HttpStatus.CONFLICT);
+    }
 
 
     @Data

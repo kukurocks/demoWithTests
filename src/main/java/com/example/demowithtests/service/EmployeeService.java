@@ -62,4 +62,6 @@ public interface EmployeeService {
     List<Employee> findAllByEmailIsNull();
      List<Employee> findAllWithSyntaxErorr();
 
+     Employee findEmployeeByEmail(String email);
+
 }

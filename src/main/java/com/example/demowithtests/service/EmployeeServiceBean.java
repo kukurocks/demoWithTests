@@ -3,10 +3,9 @@ package com.example.demowithtests.service;
 import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
-import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.repository.EmployeeRepository;
 import com.example.demowithtests.util.exception.ListEmptyException;
-import com.example.demowithtests.util.exception.ResourceNotFoundException;
+import com.example.demowithtests.util.exception.NonUniqueException;
 import com.example.demowithtests.util.exception.ResourceWasDeletedException;
 import com.example.demowithtests.util.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.JpaParameters;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import java.sql.SQLData;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,13 +36,13 @@ public class EmployeeServiceBean implements EmployeeService {
     private EntityManager entityManager;
 
 
-
     @Override
-   // @Transactional(propagation = Propagation.MANDATORY)
+    // @Transactional(propagation = Propagation.MANDATORY)
     public Employee create(Employee employee) {
         Set<Address> addresses = employee.getAddresses();
-        for(Address a: addresses){
-            a.setCountry(employee.getCountry());}
+        for (Address a : addresses) {
+            a.setCountry(employee.getCountry());
+        }
         return employeeRepository.save(employee);
     }
 
@@ -53,14 +55,15 @@ public class EmployeeServiceBean implements EmployeeService {
     public List<Employee> getAll() {
         List<Employee> list = employeeRepository.findAll();
         List<Employee> resultList = new ArrayList<>();
-        if(!list.isEmpty()){
-            for(Employee e : list){
-                if(!e.isDeleted()){
+        if (!list.isEmpty()) {
+            for (Employee e : list) {
+                if (!e.isDeleted()) {
                     resultList.add(e);
                 }
             }
-           if(resultList.isEmpty()) {
-            throw new ListEmptyException();}
+            if (resultList.isEmpty()) {
+                throw new ListEmptyException();
+            }
         }
 
         return resultList;
@@ -76,9 +79,10 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee getById(Integer id) {
-        var employee = employeeRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
-               // .orElseThrow(ResourceNotFoundException::new);
-         if (employee.isDeleted()) {
+        final var employee = employeeRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        // .orElseThrow(ResourceNotFoundException::new);
+
+        if (employee.isDeleted()) {
             throw new ResourceWasDeletedException();
         }
         return employee;
@@ -118,13 +122,13 @@ public class EmployeeServiceBean implements EmployeeService {
                 .map(entity -> {
                     entity.setCountry(country);
                     Set<Address> addresses = entity.getAddresses();
-                   for(Address address: addresses){
-                       address.setId(address.getId());
-                       address.setAddressHasActive(address.getAddressHasActive());
-                       address.setCountry(entity.getCountry());
-                       address.setCity(address.getCity());
-                       address.setStreet(address.getStreet());
-                   }
+                    for (Address address : addresses) {
+                        address.setId(address.getId());
+                        address.setAddressHasActive(address.getAddressHasActive());
+                        address.setCountry(entity.getCountry());
+                        address.setCity(address.getCity());
+                        address.setStreet(address.getStreet());
+                    }
                     return employeeRepository.save(entity);
                 });
     }
@@ -170,11 +174,9 @@ public class EmployeeServiceBean implements EmployeeService {
         employeeRepository.save(employee);
 
 
-
-
     }
-        //repository.deleteById(id);
-       // var employee = employeeRepository.findById(id).orElseThrow();
+    //repository.deleteById(id);
+    // var employee = employeeRepository.findById(id).orElseThrow();
         /*if(!employee.isPresent()){
             throw new UserNotFoundException();
 
@@ -183,7 +185,7 @@ public class EmployeeServiceBean implements EmployeeService {
              throw new ResourceWasDeletedException();
 
            }*/
-                // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
+    // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
 
 
 
@@ -225,14 +227,15 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public void removeAll() {
-       List<Employee> list = employeeRepository.findAll();
-       if(!list.isEmpty()){
-          for(Employee e:list){
-              e.setDeleted(true);
-              employeeRepository.save(e);
-          }
-       }
-       else{throw new ListEmptyException();}
+        List<Employee> list = employeeRepository.findAll();
+        if (!list.isEmpty()) {
+            for (Employee e : list) {
+                e.setDeleted(true);
+                employeeRepository.save(e);
+            }
+        } else {
+            throw new ListEmptyException();
+        }
     }
 
     /*@Override
@@ -311,47 +314,59 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     public List<Employee> findAllByEmailIsNull() {
 
-            return employeeRepository.findAllByEmailIsNull()
-                    .stream()
-                    .filter(e -> !e.isDeleted())
-                    .collect(Collectors.toList());
+        return employeeRepository.findAllByEmailIsNull()
+                .stream()
+                .filter(e -> !e.isDeleted())
+                .collect(Collectors.toList());
 
     }
+
     @Override
-    public List<Employee> findAllWithSyntaxErorr(){
+    public List<Employee> findAllWithSyntaxErorr() {
 
         List<Employee> allEmp = employeeRepository.findAll();
-       List<Employee> resultList = new ArrayList<>();
+        List<Employee> resultList = new ArrayList<>();
 
-        for(Employee e : allEmp){
-            if(!e.isDeleted()||e.getCountry()!=null){
-            String country = e.getCountry();
-            if(isLowerCase(country)){
-               e.setCountry(capitalizeString(country));
+        for (Employee e : allEmp) {
+            if (!e.isDeleted() || e.getCountry() != null) {
+                String country = e.getCountry();
+                if (isLowerCase(country)) {
+                    e.setCountry(capitalizeString(country));
                 }
-            Set<Address> addresses = e.getAddresses();
-            if(!addresses.isEmpty()){
-                for(Address address:addresses){
-                    String country1 = address.getCountry();
-                    if(country1!=null){
-                        if(isLowerCase(country1)){
-                        address.setCountry(capitalizeString(country1));
-                    }
+                Set<Address> addresses = e.getAddresses();
+                if (!addresses.isEmpty()) {
+                    for (Address address : addresses) {
+                        String country1 = address.getCountry();
+                        if (country1 != null) {
+                            if (isLowerCase(country1)) {
+                                address.setCountry(capitalizeString(country1));
+                            }
+                        }
                     }
                 }
-            }
 
                 resultList.add(e);
-               employeeRepository.save(e);
+                employeeRepository.save(e);
 
-        }
+            }
         }
         return resultList;
     }
 
+    @Override
+    public Employee findEmployeeByEmail(String email) {
+        log.debug("run findEmployeeByEmail");
+        try {
+            return employeeRepository.findEmployeeByEmail(email);
+        }
+        catch (RuntimeException ex){
+            throw new NonUniqueException();
+        }
+    }
     public boolean isLowerCase(String str) {
         return str.equals(str.toLowerCase());
     }
+
     public String capitalizeString(String str) {
         if (str == null || str.isEmpty()) {
             return str;

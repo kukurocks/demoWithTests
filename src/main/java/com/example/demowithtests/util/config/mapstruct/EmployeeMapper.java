@@ -1,4 +1,4 @@
-package com.example.demowithtests.util.config.swagger;
+package com.example.demowithtests.util.config.mapstruct;
 
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;

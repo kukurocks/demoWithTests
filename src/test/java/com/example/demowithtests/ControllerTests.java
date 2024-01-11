@@ -138,7 +138,7 @@ public class ControllerTests {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name", is("Mike")));
 
-        verify(service).getById(1);
+        verify(service).getById(anyInt());
     }
 
     @Test

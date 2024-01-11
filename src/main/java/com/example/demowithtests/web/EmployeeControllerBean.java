@@ -5,21 +5,15 @@ import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,64 +21,43 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-@Tag(name = "Employee", description = "Employee API")
-public class EmployeeControllerBean {
-    private final EmployeeMapper mapper;
+public class EmployeeControllerBean implements EmployeeController {
 
+    private final EmployeeMapper mapper;
     private final EmployeeService employeeService;
 
     //save user in db
-    @PostMapping("/users")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "This is endpoint to add a new employee.", description = "Create request to add a new employee.", tags = {"Employee"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "CREATED. The new employee is successfully created and added to database."),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
-            @ApiResponse(responseCode = "409", description = "Employee already exists")})
-    public EmployeeReadDto saveEmployee(@RequestBody @Valid EmployeeDto requestForSave) {
+
+    public EmployeeReadDto saveEmployee(EmployeeDto requestForSave) {
 
         var employee = EmployeeMapper.INSTANCE.fromDto(requestForSave);
-        var dto = EmployeeMapper.INSTANCE.toReadDto(employeeService.create(employee));
 
-        return dto;
+        return EmployeeMapper.INSTANCE.toReadDto(employeeService.create(employee));
     }
-    @PostMapping("/usersS")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void saveEmployee1(@RequestBody Employee employee) {
+
+
+    public void saveEmployee1(Employee employee) {
 
         employeeService.create(employee);
 
     }
 
-    //get list of users
-    @GetMapping("/users")
-    @ResponseStatus(HttpStatus.OK)
+
     public List<EmployeeReadDto> getAllUsers() {
 
 
         return mapper.toListReadDto(employeeService.getAll());
     }
 
-    @GetMapping("/users/p")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<Employee> getPage(@RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "5") int size
+
+    public Page<Employee> getPage(int page,
+                                  int size
     ) {
         Pageable paging = PageRequest.of(page, size);
         return employeeService.getAllWithPagination(paging);
     }
 
-    //get user by id
-    @GetMapping("/users/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "This is endpoint returned a employee by his id.", description = "Create request to read a employee by id", tags = {"Employee"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "OK. pam pam param."),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
-            @ApiResponse(responseCode = "409", description = "Employee already exists")})
-    public EmployeeReadDto getEmployeeById(@PathVariable Integer id) {
+    public EmployeeReadDto getEmployeeById(Integer id) {
         log.debug("getEmployeeById() EmployeeController - start: id = {}", id);
         var employee = employeeService.getById(id);
         log.debug("getById() EmployeeController - to dto start: id = {}", id);
@@ -93,10 +66,8 @@ public class EmployeeControllerBean {
         return dto;
     }
 
-    //Update user
-    @PutMapping("/users/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public EmployeeDto refreshEmployee(@PathVariable("id") Integer id, @RequestBody EmployeeDto employeeDto) {
+
+    public EmployeeDto refreshEmployee(Integer id, EmployeeDto employeeDto) {
 
         Employee employee = employeeService.getById(id);
         Employee updateEmployee = mapper.fromDto(employeeDto);
@@ -105,84 +76,63 @@ public class EmployeeControllerBean {
         employeeService.updateGenderById(employee.getId(), updateEmployee.getGender());
         employeeService.updateCountryById(employee.getId(), updateEmployee.getCountry());
         employeeService.updateEmailById(employee.getId(), updateEmployee.getEmail());
-        employeeService.updateNameById(employee.getId(),updateEmployee.getName());
+        employeeService.updateNameById(employee.getId(), updateEmployee.getName());
 
         return mapper.toDto(employee);
     }
 
-    //Удаление по id
-    @PatchMapping("/users/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeEmployeeById(@PathVariable Integer id) {
+
+    public void removeEmployeeById(Integer id) {
         employeeService.removeById(id);
     }
 
-    //Удаление всех юзеров
-    @DeleteMapping("/users")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+
     public void removeAllUsers() {
         employeeService.removeAll();
     }
 
-    @GetMapping("/users/country")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<Employee> findByCountry(@RequestParam(required = false) String country,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "3") int size,
-                                        @RequestParam(defaultValue = "") List<String> sortList,
-                                        @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
+
+    public Page<Employee> findByCountry(String country,
+                                        int page,
+                                       int size,
+                                        List<String> sortList,
+                                        Sort.Direction sortOrder) {
         //Pageable paging = PageRequest.of(page, size);
         //Pageable paging = PageRequest.of(page, size, Sort.by("name").ascending());
         return employeeService.findByCountryContaining(country, page, size, sortList, sortOrder.toString());
     }
 
-    @GetMapping("/users/c")
-    @ResponseStatus(HttpStatus.OK)
     public List<String> getAllUsersC() {
         return employeeService.getAllEmployeeCountry();
     }
 
-    @GetMapping("/users/s")
-    @ResponseStatus(HttpStatus.OK)
     public List<String> getAllUsersSort() {
         return employeeService.getSortCountry();
     }
 
-    @GetMapping("/users/emails")
-    @ResponseStatus(HttpStatus.OK)
     public Optional<String> getAllUsersSo() {
         return employeeService.findEmails();
     }
 
-    @GetMapping("/emails")
-    @ResponseStatus(HttpStatus.OK)
-    public List<EmployeeReadDto> getAllUsersWithoutEmail(){
+    public List<EmployeeReadDto> getAllUsersWithoutEmail() {
         List<Employee> list = employeeService.findAllByEmailIsNull();
 
-        return   EmployeeMapper.INSTANCE.toListReadDto(list);
+        return EmployeeMapper.INSTANCE.toListReadDto(list);
 
     }
-    @GetMapping("/emails/by")
-    @ResponseStatus(HttpStatus.OK)
-    public Employee getUserByEmail(@RequestParam(defaultValue = "n@gmail.com") String email){
 
-       var em = employeeService.findEmployeeByEmail(email);
-        return em;
+    public Employee getUserByEmail(String email) {
+
+        return employeeService.findEmployeeByEmail(email);
+    }
+    public List<EmployeeReadDto> findAllCountry() {
+
+        List<Employee> allWithSyntaxError = employeeService.findAllWithSyntaxError();
+
+        return EmployeeMapper.INSTANCE.toListReadDto(allWithSyntaxError);
     }
 
-
-    @GetMapping("/country")
-    @ResponseStatus(HttpStatus.OK)
-    public List<EmployeeReadDto> findAllCountry(){
-
-        List<Employee> allWithSyntaxErorr = employeeService.findAllWithSyntaxErorr();
-
-        return EmployeeMapper.INSTANCE.toListReadDto(allWithSyntaxErorr);
-    }
-
-    @GetMapping("/users/countryBy")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Employee> getByCountry(@RequestParam(required = true) String country) {
+    public List<Employee> getByCountry(String country) {
         return employeeService.filterByCountry(country);
     }
 }

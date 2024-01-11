@@ -14,14 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.query.JpaParameters;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
-import java.sql.SQLData;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,12 +75,9 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee getById(Integer id) {
-        final var employee = employeeRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        final var employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
         // .orElseThrow(ResourceNotFoundException::new);
-
-        if (employee.isDeleted()) {
-            throw new ResourceWasDeletedException();
-        }
+        if (employee.isDeleted()) throw new ResourceWasDeletedException();
         return employee;
     }
 
@@ -157,13 +150,13 @@ public class EmployeeServiceBean implements EmployeeService {
                     entity.setGender(employee.getGender());
                     return employeeRepository.save(entity);
                 })
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override
     public void removeById(Integer id) {
 
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        Employee employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
         // .orElseThrow(ResourceNotFoundException::new);
         if (employee.isDeleted()) {
             throw new ResourceWasDeletedException();
@@ -270,7 +263,7 @@ public class EmployeeServiceBean implements EmployeeService {
         log.info("getAllEmployeeCountry() - start:");
         List<Employee> employeeList = employeeRepository.findAll();
         List<String> countries = employeeList.stream()
-                .map(country -> country.getCountry())
+                .map(Employee::getCountry)
                 .collect(Collectors.toList());
         /*List<String> countries = employeeList.stream()
                 .map(Employee::getCountry)
@@ -303,7 +296,7 @@ public class EmployeeServiceBean implements EmployeeService {
                 .filter(s -> s.endsWith(".com"))
                 .findFirst()
                 .orElse("error?");
-        return Optional.ofNullable(opt);
+        return Optional.of(opt);
     }
 
     @Override
@@ -322,7 +315,7 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findAllWithSyntaxErorr() {
+    public List<Employee> findAllWithSyntaxError() {
 
         List<Employee> allEmp = employeeRepository.findAll();
         List<Employee> resultList = new ArrayList<>();
@@ -372,8 +365,7 @@ public class EmployeeServiceBean implements EmployeeService {
             return str;
         }
 
-        String correctedString = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
-        return correctedString;
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
 
 }

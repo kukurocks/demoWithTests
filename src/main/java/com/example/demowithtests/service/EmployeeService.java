@@ -60,7 +60,7 @@ public interface EmployeeService {
     List<Employee> filterByCountry(String country);
 
     List<Employee> findAllByEmailIsNull();
-     List<Employee> findAllWithSyntaxErorr();
+     List<Employee> findAllWithSyntaxError();
 
      Employee findEmployeeByEmail(String email);
 

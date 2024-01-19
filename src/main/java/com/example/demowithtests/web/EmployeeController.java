@@ -107,6 +107,10 @@ public interface EmployeeController {
     @GetMapping("/users/countryBy")
     @ResponseStatus(HttpStatus.OK)
     List<Employee> getByCountry(@RequestParam() String country);
+
+    @PatchMapping("/users/updateCountry")
+    @ResponseStatus(HttpStatus.OK)
+    void updateCountry();
 }
 
 

@@ -64,4 +64,6 @@ public interface EmployeeService {
 
      Employee findEmployeeByEmail(String email);
 
+     void updateCountries();
+
 }

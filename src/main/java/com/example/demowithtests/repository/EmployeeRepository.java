@@ -5,8 +5,10 @@ import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,6 +36,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Page<Employee> findByCountryContaining(String country, Pageable pageable);
 
     List<Employee> findAllByEmailIsNull();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update users_1 " +
+            "set country = regexp_replace(country, left(country, 1), upper(left(country, 1))) " +
+            "where country ~ '^[a-z]|^[а-я]'", nativeQuery = true)
+    void updateLowerCaseCountriesToUpperCase();
+
 
 
 

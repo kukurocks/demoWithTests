@@ -132,7 +132,13 @@ public class EmployeeControllerBean implements EmployeeController {
         return EmployeeMapper.INSTANCE.toListReadDto(allWithSyntaxError);
     }
 
+
     public List<Employee> getByCountry(String country) {
         return employeeService.filterByCountry(country);
+    }
+
+    @Override
+    public void updateCountry() {
+         employeeService.updateCountries();
     }
 }

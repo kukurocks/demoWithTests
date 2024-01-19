@@ -22,7 +22,7 @@ import java.util.Set;
 @Builder
 public class EmployeeReadDto {
 
-    public Integer id;
+    //public Integer id;
     @NotNull(message = "Name may not be null")
     @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
     @Schema(description = "Name of an employee.", example = "Billy", required = true)
@@ -34,6 +34,6 @@ public class EmployeeReadDto {
     @NotNull
     public String email;
 
-    public Set<AddressResponseDto> addresses = new HashSet<>();
-    public Gender gender;
+    //public Set<AddressResponseDto> addresses = new HashSet<>();
+   // public Gender gender;
 }

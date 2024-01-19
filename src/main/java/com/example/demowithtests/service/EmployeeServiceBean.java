@@ -295,7 +295,7 @@ public class EmployeeServiceBean implements EmployeeService {
         var opt = emails.stream()
                 .filter(s -> s.endsWith(".com"))
                 .findFirst()
-                .orElse("error?");
+                .orElse("error");
         return Optional.of(opt);
     }
 
@@ -356,6 +356,12 @@ public class EmployeeServiceBean implements EmployeeService {
             throw new NonUniqueException();
         }
     }
+
+    @Override
+    public void updateCountries() {
+     employeeRepository.updateLowerCaseCountriesToUpperCase();
+    }
+
     public boolean isLowerCase(String str) {
         return str.equals(str.toLowerCase());
     }

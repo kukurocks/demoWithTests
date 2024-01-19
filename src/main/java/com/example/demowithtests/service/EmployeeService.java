@@ -1,5 +1,6 @@
 package com.example.demowithtests.service;
 
+import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
 import org.springframework.data.domain.Page;
@@ -65,5 +66,12 @@ public interface EmployeeService {
      Employee findEmployeeByEmail(String email);
 
      void updateCountries();
+
+     Address addNewAddressById(Integer id, Address a);
+
+     Integer getCountAddresses(Integer id);
+
+
+
 
 }

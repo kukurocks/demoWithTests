@@ -29,4 +29,8 @@ public class Address {
 
     @Column(name = "street")
     private String street;
+
+    @Column(name="e_address")
+    private String email;
+
 }

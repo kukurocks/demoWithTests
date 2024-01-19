@@ -1,6 +1,8 @@
 package com.example.demowithtests.util.config.mapstruct;
 
+import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.dto.AddressRequestDto;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import org.mapstruct.Mapper;
@@ -22,4 +24,7 @@ public interface EmployeeMapper {
  EmployeeReadDto toReadDto(Employee employee);
 
  List<EmployeeReadDto> toListReadDto(List<Employee> list);
+
+ AddressRequestDto toAddressDto(Address address);
+ Address fromAddressDto(AddressRequestDto addressRequestDto);
 }

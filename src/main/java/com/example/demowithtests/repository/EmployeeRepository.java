@@ -20,8 +20,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query(value = "select e from Employee e where e.country =?1")
     List<Employee> findByCountry(String country);
 
-    @Query(value = "select * from users_1 join addresses on users_1.id = addresses.employee_id " +
-            "where users_1.gender = :gender and addresses.country = :country", nativeQuery = true)
+    @Query(value = "select * from users join addresses on users.id = addresses.employee_id " +
+            "where users.gender = :gender and addresses.country = :country", nativeQuery = true)
     List<Employee> findByGender(String gender, String country);
 
     Employee findByName(String name);
@@ -39,12 +39,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update users_1 " +
+    @Query(value = "update users " +
             "set country = regexp_replace(country, left(country, 1), upper(left(country, 1))) " +
-            "where country ~ '^[a-z]|^[а-я]'", nativeQuery = true)
+            "where country ~ '^[a-z]'", nativeQuery = true)
     void updateLowerCaseCountriesToUpperCase();
 
 
+    @Query(value = "select COUNT(*) from addresses where employee_id = ?1", nativeQuery = true)
+    Integer countActiveAddress(Integer id);
 
 
 }

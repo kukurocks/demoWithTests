@@ -1,5 +1,6 @@
 package com.example.demowithtests.web;
 
+import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
@@ -54,7 +55,7 @@ public interface EmployeeController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
             @ApiResponse(responseCode = "409", description = "Employee already exists")})
-    EmployeeReadDto getEmployeeById(@PathVariable Integer id);
+    EmployeeDto getEmployeeById(@PathVariable Integer id);
 
     //Update user
     @PutMapping("/users/{id}")
@@ -111,6 +112,15 @@ public interface EmployeeController {
     @PatchMapping("/users/updateCountry")
     @ResponseStatus(HttpStatus.OK)
     void updateCountry();
+
+    @PostMapping("/users/addNewAddress")
+    @ResponseStatus(HttpStatus.OK)
+    void addNewAddress(@RequestParam Integer id, @RequestBody Address address);
+
+    @GetMapping("/users/addressCount/{id}")
+    @ResponseStatus(HttpStatus.OK)
+
+    Integer getAddressCount(@PathVariable Integer id);
 }
 
 

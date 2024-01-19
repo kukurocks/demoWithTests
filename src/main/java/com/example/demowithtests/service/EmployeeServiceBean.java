@@ -75,7 +75,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee getById(Integer id) {
-        final var employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        final Employee employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
         // .orElseThrow(ResourceNotFoundException::new);
         if (employee.isDeleted()) throw new ResourceWasDeletedException();
         return employee;
@@ -360,6 +360,26 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     public void updateCountries() {
      employeeRepository.updateLowerCaseCountriesToUpperCase();
+    }
+
+    @Override
+    public Address addNewAddressById(Integer id, Address a) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        Set<Address> sets = employee.stream().flatMap(e->e.getAddresses().stream()).collect(Collectors.toSet());
+        sets.add(a);
+        employee.get().setAddresses(sets);
+        employeeRepository.save(employee.get());
+        return a;
+
+
+    }
+
+    @Override
+    public Integer getCountAddresses(Integer id) {
+        return employeeRepository.countActiveAddress(id);
     }
 
     public boolean isLowerCase(String str) {

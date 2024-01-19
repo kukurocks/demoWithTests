@@ -1,5 +1,6 @@
 package com.example.demowithtests.web;
 
+import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
@@ -27,6 +28,8 @@ public class EmployeeControllerBean implements EmployeeController {
     private final EmployeeService employeeService;
 
     //save user in db
+
+
 
     public EmployeeReadDto saveEmployee(EmployeeDto requestForSave) {
 
@@ -57,11 +60,11 @@ public class EmployeeControllerBean implements EmployeeController {
         return employeeService.getAllWithPagination(paging);
     }
 
-    public EmployeeReadDto getEmployeeById(Integer id) {
+    public EmployeeDto getEmployeeById(Integer id) {
         log.debug("getEmployeeById() EmployeeController - start: id = {}", id);
         var employee = employeeService.getById(id);
         log.debug("getById() EmployeeController - to dto start: id = {}", id);
-        var dto = EmployeeMapper.INSTANCE.toReadDto(employee);
+        var dto = EmployeeMapper.INSTANCE.toDto(employee);
         log.debug("getEmployeeById() EmployeeController - end: name = {}", dto.name);
         return dto;
     }
@@ -140,5 +143,16 @@ public class EmployeeControllerBean implements EmployeeController {
     @Override
     public void updateCountry() {
          employeeService.updateCountries();
+    }
+
+    @Override
+    public void addNewAddress(Integer id, Address address) {
+
+        employeeService.addNewAddressById(id, address);
+    }
+
+    @Override
+    public Integer getAddressCount(Integer id) {
+        return employeeService.getCountAddresses(id);
     }
 }

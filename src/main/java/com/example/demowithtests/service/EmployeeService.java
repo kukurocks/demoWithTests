@@ -64,4 +64,8 @@ public interface EmployeeService {
 
      Employee findEmployeeByEmail(String email);
 
+     List<String[]> findEmployeeWithThemEmailLength (String employee, String sortBY);
+
+    List<Employee> getByName (String name);
+
 }

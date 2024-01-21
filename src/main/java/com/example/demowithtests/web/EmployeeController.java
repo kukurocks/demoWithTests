@@ -1,5 +1,6 @@
 package com.example.demowithtests.web;
 
+import com.electronwill.nightconfig.core.conversion.Path;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
@@ -54,12 +55,16 @@ public interface EmployeeController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
             @ApiResponse(responseCode = "409", description = "Employee already exists")})
-    EmployeeReadDto getEmployeeById(@PathVariable Integer id);
+    EmployeeReadDto getEmployeeById(@PathVariable(name = "id") Integer id);
 
     //Update user
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     EmployeeDto refreshEmployee(@PathVariable("id") Integer id, @RequestBody EmployeeDto employeeDto);
+
+    @GetMapping("/users/")
+    @ResponseStatus(HttpStatus.OK)
+    List<Employee> getEmployeeByName(@RequestParam(name = "name") String name);
 
     //Удаление по id
     @PatchMapping("/users/{id}")
@@ -106,7 +111,12 @@ public interface EmployeeController {
 
     @GetMapping("/users/countryBy")
     @ResponseStatus(HttpStatus.OK)
-    List<Employee> getByCountry(@RequestParam() String country);
+    List<Employee> getByCountry(@RequestParam String country);
+
+    @GetMapping ("users/lengthEmail")
+    @ResponseStatus(HttpStatus.OK)
+    List<String[]> findEmailLength(@RequestParam(name = "name") String employee, @RequestParam(name = "sortBy", defaultValue = "name") String sortBY);
+
 }
 
 

@@ -20,6 +20,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     #open-in-view: false
     #generate-ddl: true
+    properties:
+      hibernate:
+        generate_statistics: true
   flyway:
     #    locations: filesystem:.\src\main\resources\db\migration
     enabled: false
@@ -37,6 +40,9 @@ logging:
     org.springframework: info
     org.hibernate: error
     com.example.demowithtests.service: debug
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+
 # Server configuration
 server:
   port: 8088 #set your port

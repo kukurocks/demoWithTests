@@ -356,6 +356,21 @@ public class EmployeeServiceBean implements EmployeeService {
             throw new NonUniqueException();
         }
     }
+
+    @Override
+    public List<String[]> findEmployeeWithThemEmailLength(String employee, String sortBY) {
+
+
+
+        return employeeRepository.findByAsArrayAndSort(employee, Sort.by(sortBY));
+
+    }
+
+    @Override
+    public List<Employee> getByName(String name) {
+        return employeeRepository.findByName(name);
+    }
+
     public boolean isLowerCase(String str) {
         return str.equals(str.toLowerCase());
     }

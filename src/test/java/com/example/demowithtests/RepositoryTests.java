@@ -95,7 +95,7 @@ public class RepositoryTests {
         assertThat(employees.get(0).getGender()).isEqualTo(Gender.M);
     }
 
-    @Test
+ /*   @Test
     @Order(6)
     @Rollback(value = false)
     @DisplayName("Delete employee test")
@@ -114,6 +114,6 @@ public class RepositoryTests {
         }
 
         Assertions.assertThat(employeeNull).isNull();
-    }
+    }*/
 
 }

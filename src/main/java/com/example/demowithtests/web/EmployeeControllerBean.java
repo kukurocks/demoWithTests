@@ -81,6 +81,11 @@ public class EmployeeControllerBean implements EmployeeController {
         return mapper.toDto(employee);
     }
 
+    @Override
+    public List<Employee>  getEmployeeByName(String name) {
+        return employeeService.getByName(name);
+    }
+
 
     public void removeEmployeeById(Integer id) {
         employeeService.removeById(id);
@@ -134,5 +139,11 @@ public class EmployeeControllerBean implements EmployeeController {
 
     public List<Employee> getByCountry(String country) {
         return employeeService.filterByCountry(country);
+    }
+
+    @Override
+    public List<String[]> findEmailLength(String employee, String sortBY) {
+        return employeeService.findEmployeeWithThemEmailLength(employee, sortBY);
+
     }
 }

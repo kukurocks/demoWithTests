@@ -16,24 +16,27 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class EmployeeReadDto {
 
-    public Integer id;
-    @NotNull(message = "Name may not be null")
-    @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
-    @Schema(description = "Name of an employee.", example = "Billy", required = true)
-    public String name;
+public record EmployeeReadDto(
+        Integer id,
+        @NotNull(message = "Name may not be null")
+        @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
+        @Schema(description = "Name of an employee.", example = "Billy", required = true)
+        String name,
 
-    public String country;
+        String country,
 
-    @Email
-    @NotNull
-    public String email;
+        @Email
+        @NotNull
+        String email,
 
-    public Set<AddressResponseDto> addresses = new HashSet<>();
-    public Gender gender;
+        Set<AddressResponseDto> addresses,
+        Gender gender
+
+) {
+    @Builder
+    public EmployeeReadDto {
+
+    }
+
 }

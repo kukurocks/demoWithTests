@@ -1,21 +1,32 @@
 package com.example.demowithtests.dto;
 
-import java.time.Instant;
-import java.util.Date;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
 
 //@Accessors(chain = true)
-public class AddressRequestDto {
 
-    public Long id;
+public record AddressRequestDto (
+        Long id,
 
-    public Boolean addressHasActive = Boolean.TRUE;
+        Boolean addressHasActive,
 
-    public String country;
+        String country,
 
-    public String city;
+        String city,
 
-    public String street;
+        String street,
 
-    //todo: something Jira - 5544
-    public Date date = Date.from(Instant.now());
+        //todo: something Jira - 5544
+
+        @CreationTimestamp
+        LocalDate date
+){
+
+
+    public AddressRequestDto{
+        }
+
 }
+
+

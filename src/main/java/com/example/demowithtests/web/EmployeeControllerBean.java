@@ -65,7 +65,7 @@ public class EmployeeControllerBean implements EmployeeController {
         var employee = employeeService.getById(id);
         log.debug("getById() EmployeeController - to dto start: id = {}", id);
         var dto = EmployeeMapper.INSTANCE.toReadDto(employee);
-        log.debug("getEmployeeById() EmployeeController - end: name = {}", dto.name);
+        log.debug("getEmployeeById() EmployeeController - end: name = {}", dto.name());
         return dto;
     }
 

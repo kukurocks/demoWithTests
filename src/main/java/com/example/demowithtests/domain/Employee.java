@@ -3,16 +3,18 @@ package com.example.demowithtests.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users_1")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Where(clause = "deleted<>true")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,8 @@ import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +37,12 @@ public interface EmployeeController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
             @ApiResponse(responseCode = "409", description = "Employee already exists")})
-    EmployeeReadDto saveEmployee(@RequestBody @Valid EmployeeDto requestForSave);
+    EmployeeReadDto saveEmployee(@Parameter(
+            name = "employee",
+            description = "Employee data for creation",
+            required = true,
+            schema = @Schema(implementation = EmployeeDto.class))
+                                 @RequestBody @Valid EmployeeDto requestForSave);
 
     /**
      * Saves the given employee in the database.
@@ -118,7 +125,6 @@ public interface EmployeeController {
      * Deletes an employee from the database based on their ID.
      *
      * @param id the ID of the employee to be deleted
-     *
      * @since 1.0
      */
     //Удаление по id
@@ -165,7 +171,6 @@ public interface EmployeeController {
             @ApiResponse(responseCode = "201", description = "OK."),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND. No employees in data base")})
-
     Page<Employee> findByCountry(@RequestParam(required = false) String country,
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "3") int size,
@@ -176,7 +181,6 @@ public interface EmployeeController {
      * Retrieves a list of all countries of all employees.
      *
      * @return a list of String representing the countries
-     *
      * @since 1.0
      */
     @GetMapping("/users/c")
@@ -192,7 +196,6 @@ public interface EmployeeController {
      * Retrieves a list of countries sorted by name.
      *
      * @return a list of countries sorted by name
-     *
      * @since 1.0
      */
     @GetMapping("/users/s")
@@ -208,10 +211,8 @@ public interface EmployeeController {
      * Retrieves a list of emails of all employees.
      *
      * @return Optional<String> representing the list of emails. Returns an empty Optional if there are no employees in the database.
-     *
      * @throws InaccessibleDatabaseException if there is an issue accessing the database.
-     * @throws UnauthorizedAccessException if the user is not authorized to access the employee emails.
-     *
+     * @throws UnauthorizedAccessException   if the user is not authorized to access the employee emails.
      * @since 1.0.0
      */
     @GetMapping("/users/emails")
@@ -227,7 +228,6 @@ public interface EmployeeController {
      * Retrieves a list of all employee records that do not have an email address.
      *
      * @return A list of EmployeeReadDto objects representing the retrieved employees without an email.
-     *
      * @GetMapping("/emails") annotation specifies that this method handles HTTP GET requests to the "/emails" endpoint.
      * @ResponseStatus(HttpStatus.OK) annotation sets the HTTP response status code to 200 (OK) for a successful operation.
      * @Operation(summary = "Returns all employees filtered by country.") annotation provides a summary of the method's functionality.
@@ -236,7 +236,7 @@ public interface EmployeeController {
      * - @ApiResponse(responseCode = "400", description = "Invalid input") - An error response with a status code of 400 and description "Invalid input" when the input is invalid.
      * - @ApiResponse(responseCode = "404", description = "NOT FOUND. No employees in data base") - An error response with a status code of 404 and description "NOT FOUND. No employees
      * in data base" when no employees are found in the database.
-     *
+     * <p>
      * This method queries the database to retrieve all employee records that do not have an email address and returns them as a list of EmployeeReadDto objects.
      */
     @GetMapping("/emails")
@@ -267,7 +267,7 @@ public interface EmployeeController {
 
     /**
      * Returns all employees whose country name starts with a lowercase letter.
-     *
+     * <p>
      * Request to read all employees whose country name starts with a lowercase letter.
      *
      * @return a list of EmployeeReadDto objects representing the employees whose country name starts with a lowercase letter.

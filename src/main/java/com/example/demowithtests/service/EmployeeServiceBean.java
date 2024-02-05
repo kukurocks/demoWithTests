@@ -289,7 +289,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
         var emails = employeeList.stream()
                 .map(Employee::getEmail)
-                .collect(Collectors.toList());
+                .toList();
 
         var opt = emails.stream()
                 .filter(s -> s.endsWith(".com"))

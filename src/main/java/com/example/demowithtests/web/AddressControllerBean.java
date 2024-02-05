@@ -6,7 +6,6 @@ import com.example.demowithtests.dto.AddressResponseDto;
 import com.example.demowithtests.service.AddressService;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.AddressMapper;
-import com.example.demowithtests.util.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;

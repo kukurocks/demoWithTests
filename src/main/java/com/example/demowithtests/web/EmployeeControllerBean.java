@@ -3,7 +3,6 @@ package com.example.demowithtests.web;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
-import com.example.demowithtests.service.AddressService;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController

@@ -53,7 +53,7 @@ public class EmployeeServiceBean implements EmployeeService {
         List<Employee> resultList = new ArrayList<>();
         if (!list.isEmpty()) {
             for (Employee e : list) {
-                if (!e.isDeleted()) {
+                if (!e.getDeleted()) {
                     resultList.add(e);
                 }
             }
@@ -77,7 +77,7 @@ public class EmployeeServiceBean implements EmployeeService {
     public Employee getById(Integer id) {
         final var employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
         // .orElseThrow(ResourceNotFoundException::new);
-        if (employee.isDeleted()) throw new ResourceWasDeletedException();
+        if (employee.getDeleted()) throw new ResourceWasDeletedException();
         return employee;
     }
 
@@ -158,7 +158,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
         Employee employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
         // .orElseThrow(ResourceNotFoundException::new);
-        if (employee.isDeleted()) {
+        if (employee.getDeleted()) {
             throw new ResourceWasDeletedException();
         }
 
@@ -309,7 +309,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
         return employeeRepository.findAllByEmailIsNull()
                 .stream()
-                .filter(e -> !e.isDeleted())
+                .filter(e -> !e.getDeleted())
                 .collect(Collectors.toList());
 
     }
@@ -321,7 +321,7 @@ public class EmployeeServiceBean implements EmployeeService {
         List<Employee> resultList = new ArrayList<>();
 
         for (Employee e : allEmp) {
-            if (!e.isDeleted() || e.getCountry() != null) {
+            if (!e.getDeleted() || e.getCountry() != null) {
                 String country = e.getCountry();
                 if (isLowerCase(country)) {
                     e.setCountry(capitalizeString(country));

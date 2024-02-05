@@ -31,7 +31,6 @@ public class EmployeeServiceBean implements EmployeeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Override
     // @Transactional(propagation = Propagation.MANDATORY)
     public Employee create(Employee employee) {

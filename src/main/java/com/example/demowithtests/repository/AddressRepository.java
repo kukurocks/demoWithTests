@@ -6,13 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface AddressRepository extends JpaRepository<Address,Integer> {
+public interface AddressRepository extends JpaRepository<Address, Integer> {
 
-    @Query("select e.id, e.name, a.addressHasActive from Employee as e left outer join e.addresses as a where e.id = ?1")
-    List<String> findAllById(Integer id);
+    @Query(value = "select * from addresses as a where a.employee_id=:id", nativeQuery = true)
+    List<Address> findAddressByEmployeeId(Integer id);
+
+    List<Address> findByEmployee(Employee employee);
 
 }

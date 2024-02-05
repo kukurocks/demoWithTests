@@ -27,7 +27,7 @@ public class EmployeeControllerBean implements EmployeeController {
 
     private final EmployeeMapper mapper;
     private final EmployeeService employeeService;
-    private final AddressService addressService;
+
 
     //save user in db
 
@@ -149,9 +149,5 @@ public class EmployeeControllerBean implements EmployeeController {
         return employeeService.findEmployeeWithThemEmailLength(employee, sortBY);
 
     }
-
-    @Override
-    public  List<String> findAdr(Integer id) {
-        return addressService.getAllById(id);
-    }
 }
+

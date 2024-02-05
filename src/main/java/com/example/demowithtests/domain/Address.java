@@ -1,5 +1,7 @@
 package com.example.demowithtests.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,6 +15,12 @@ import javax.persistence.*;
 @Table(name = "addresses")
 @Builder
 public class Address {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id",nullable = false)
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    private Employee employee;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

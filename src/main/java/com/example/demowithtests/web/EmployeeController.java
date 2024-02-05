@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
+@RestController
 @Tag(name = "Employee", description = "Employee API")
 public interface EmployeeController {
 
@@ -116,11 +116,6 @@ public interface EmployeeController {
     @GetMapping ("users/lengthEmail")
     @ResponseStatus(HttpStatus.OK)
     List<String[]> findEmailLength(@RequestParam(name = "name") String employee, @RequestParam(name = "sortBy", defaultValue = "name") String sortBY);
-
-    @GetMapping("/users/address/")
-    @ResponseStatus(HttpStatus.OK)
-    List<String> findAdr(@RequestParam Integer id);
-
 }
 
 

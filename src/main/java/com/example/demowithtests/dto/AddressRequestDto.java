@@ -1,6 +1,7 @@
 package com.example.demowithtests.dto;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 
 //@Accessors(chain = true)
@@ -17,5 +18,5 @@ public class AddressRequestDto {
     public String street;
 
     //todo: something Jira - 5544
-    public Date date = Date.from(Instant.now());
+    public LocalDate date = LocalDate.now();
 }

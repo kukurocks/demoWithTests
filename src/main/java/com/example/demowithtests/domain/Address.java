@@ -18,7 +18,7 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "address_has_active")
+    @Column(name = "address_has_active",nullable = false)
     private Boolean addressHasActive = Boolean.TRUE;
 
     @Column(name = "country")

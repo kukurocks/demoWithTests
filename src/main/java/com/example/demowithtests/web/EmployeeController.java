@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "Employee", description = "Employee API")
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface EmployeeController {
 
 

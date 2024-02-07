@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 //@Accessors(chain = true)
-public class AddressRequestDto {
+public class AddressDto {
 
     public Long id;
 

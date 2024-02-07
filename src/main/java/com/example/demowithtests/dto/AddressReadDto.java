@@ -3,7 +3,7 @@ package com.example.demowithtests.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-public class AddressResponseDto {
+public class AddressReadDto {
 
     @Schema(description = "Name of the country.", example = "England")
     public String country;

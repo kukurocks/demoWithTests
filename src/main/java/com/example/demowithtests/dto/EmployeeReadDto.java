@@ -36,6 +36,6 @@ public class EmployeeReadDto {
     @NotNull
     public String email;
 
-    public Set<AddressResponseDto> addresses = new HashSet<>();
+    public Set<AddressReadDto> addresses = new HashSet<>();
     public Gender gender;
 }

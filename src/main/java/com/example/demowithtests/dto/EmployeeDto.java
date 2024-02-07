@@ -30,7 +30,7 @@ public class EmployeeDto {
     @Schema(description = "Name of an employee.", example = "Billy", required = true)
     public String name;
 
-    @CountryRightFormed
+   // @CountryRightFormed
     @Schema(description = "Name of the country.", example = "England", required = true)
     public String country;
 
@@ -41,5 +41,5 @@ public class EmployeeDto {
     public String email;
     public Instant startDate = Instant.now();
     public Gender gender;
-    public Set<AddressRequestDto> addresses = new HashSet<>();
+    public Set<AddressDto> addresses = new HashSet<>();
 }

@@ -22,7 +22,6 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class EmployeeControllerBean implements EmployeeController {
 

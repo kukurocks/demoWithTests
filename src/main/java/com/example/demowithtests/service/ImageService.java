@@ -14,4 +14,6 @@ public interface ImageService {
     Image getImageById(Integer id);
 
     byte[] downloadImage(String imageName);
+
+    void delete(Integer id);
 }

@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@Data
 @Getter
 @Setter
 @ToString
@@ -29,4 +30,6 @@ public class Address {
 
     @Column(name = "street")
     private String street;
+
+
 }

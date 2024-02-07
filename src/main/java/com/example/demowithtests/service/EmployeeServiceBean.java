@@ -3,7 +3,9 @@ package com.example.demowithtests.service;
 import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
+import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.repository.EmployeeRepository;
+import com.example.demowithtests.repository.PassportRepository;
 import com.example.demowithtests.util.exception.ListEmptyException;
 import com.example.demowithtests.util.exception.NonUniqueException;
 import com.example.demowithtests.util.exception.ResourceWasDeletedException;
@@ -27,10 +29,18 @@ import java.util.stream.Collectors;
 public class EmployeeServiceBean implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final PassportService passportService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
+
+    @Override
+    public Employee handPassport(Integer employeeId, Integer passportId) {
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow();
+        employee.setPassport(passportService.hand(passportId));
+        return employeeRepository.save(employee);
+    }
 
     @Override
     // @Transactional(propagation = Propagation.MANDATORY)
@@ -351,11 +361,11 @@ public class EmployeeServiceBean implements EmployeeService {
         log.debug("run findEmployeeByEmail");
         try {
             return employeeRepository.findEmployeeByEmail(email);
-        }
-        catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             throw new NonUniqueException();
         }
     }
+
     public boolean isLowerCase(String str) {
         return str.equals(str.toLowerCase());
     }

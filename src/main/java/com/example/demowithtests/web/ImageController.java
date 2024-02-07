@@ -20,5 +20,8 @@ public interface ImageController {
 
     @GetMapping("/photo/{fileName}")
     ResponseEntity<?> downloadImage(@PathVariable String fileName);
+
+    @DeleteMapping("/{id}")
+    void deleteImage(@PathVariable Integer id);
 }
 

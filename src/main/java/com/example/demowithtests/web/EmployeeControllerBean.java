@@ -3,6 +3,7 @@ package com.example.demowithtests.web;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
+import com.example.demowithtests.dto.PassportReadDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,11 @@ public class EmployeeControllerBean implements EmployeeController {
     private final EmployeeService employeeService;
 
     //save user in db
+
+    @Override
+    public EmployeeDto setPassportForEmployee(PassportReadDto passportReadDto) {
+        return employeeService.handPassport(passportReadDto.) ;
+    }
 
     public EmployeeReadDto saveEmployee(EmployeeDto requestForSave) {
 

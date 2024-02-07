@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface EmployeeService {
 
+    Employee handPassport(Integer employeeId, Integer passportId);
+
     Employee create(Employee employee);
 
     Employee createEM(Employee employee);

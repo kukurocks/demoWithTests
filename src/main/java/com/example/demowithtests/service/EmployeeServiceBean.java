@@ -37,7 +37,11 @@ public class EmployeeServiceBean implements EmployeeService {
         Set<Address> addresses = employee.getAddresses();
         for (Address a : addresses) {
             a.setCountry(employee.getCountry());
+            a.setEmployee(employee);
+            a.setAddressHasActive(Boolean.TRUE);
         }
+
+
         return employeeRepository.save(employee);
     }
 

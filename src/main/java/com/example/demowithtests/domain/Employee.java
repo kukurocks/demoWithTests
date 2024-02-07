@@ -1,6 +1,7 @@
 package com.example.demowithtests.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -27,8 +28,8 @@ public class Employee {
     private Boolean deleted;
 
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
-    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Address> addresses = new HashSet<>();
 
     @Enumerated(EnumType.STRING)

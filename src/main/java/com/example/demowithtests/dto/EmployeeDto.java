@@ -1,6 +1,9 @@
 package com.example.demowithtests.dto;
 
 import com.example.demowithtests.domain.Gender;
+import com.example.demowithtests.util.annotation.dto.BlockedEmailDomains;
+import com.example.demowithtests.util.annotation.dto.CountryRightFormed;
+import com.example.demowithtests.util.annotation.dto.Severity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,10 +29,14 @@ public class EmployeeDto {
     @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
     @Schema(description = "Name of an employee.", example = "Billy", required = true)
     public String name;
+
+    @CountryRightFormed
     @Schema(description = "Name of the country.", example = "England", required = true)
     public String country;
+
     @Email
     @NotNull
+    @BlockedEmailDomains(payload = Severity.Error.class)
     @Schema(description = "Email address of an employee.", example = "billys@mail.com", required = true)
     public String email;
     public Instant startDate = Instant.now();

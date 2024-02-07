@@ -4,6 +4,7 @@ import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
+import com.example.demowithtests.util.annotation.Profiler;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+
 
 @RestController
 @AllArgsConstructor
@@ -58,11 +61,8 @@ public class EmployeeControllerBean implements EmployeeController {
     }
 
     public EmployeeReadDto getEmployeeById(Integer id) {
-        log.debug("getEmployeeById() EmployeeController - start: id = {}", id);
         var employee = employeeService.getById(id);
-        log.debug("getById() EmployeeController - to dto start: id = {}", id);
         var dto = EmployeeMapper.INSTANCE.toReadDto(employee);
-        log.debug("getEmployeeById() EmployeeController - end: name = {}", dto.name);
         return dto;
     }
 

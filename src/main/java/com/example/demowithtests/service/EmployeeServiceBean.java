@@ -4,6 +4,10 @@ import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.repository.EmployeeRepository;
+import com.example.demowithtests.util.annotation.Profiler;
+import com.example.demowithtests.util.annotation.entity.ActivateCustomAnnotations;
+import com.example.demowithtests.util.annotation.entity.Name;
+import com.example.demowithtests.util.annotation.entity.ToLowerCase;
 import com.example.demowithtests.util.exception.ListEmptyException;
 import com.example.demowithtests.util.exception.NonUniqueException;
 import com.example.demowithtests.util.exception.ResourceWasDeletedException;
@@ -21,6 +25,7 @@ import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Profiler
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -31,7 +36,7 @@ public class EmployeeServiceBean implements EmployeeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-
+    @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
     @Override
     // @Transactional(propagation = Propagation.MANDATORY)
     public Employee create(Employee employee) {
@@ -290,7 +295,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
         var emails = employeeList.stream()
                 .map(Employee::getEmail)
-                .collect(Collectors.toList());
+                .toList();
 
         var opt = emails.stream()
                 .filter(s -> s.endsWith(".com"))
@@ -351,11 +356,11 @@ public class EmployeeServiceBean implements EmployeeService {
         log.debug("run findEmployeeByEmail");
         try {
             return employeeRepository.findEmployeeByEmail(email);
-        }
-        catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             throw new NonUniqueException();
         }
     }
+
     public boolean isLowerCase(String str) {
         return str.equals(str.toLowerCase());
     }

@@ -1,6 +1,8 @@
 package com.example.demowithtests.dto;
 
 import com.example.demowithtests.domain.Gender;
+import com.example.demowithtests.util.annotation.dto.BlockedEmailDomains;
+import com.example.demowithtests.util.annotation.dto.Severity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

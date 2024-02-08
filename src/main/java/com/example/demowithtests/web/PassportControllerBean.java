@@ -1,5 +1,6 @@
 package com.example.demowithtests.web;
 
+import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.dto.ImageReadDto;
 import com.example.demowithtests.dto.PassportDto;
@@ -7,6 +8,8 @@ import com.example.demowithtests.service.PassportServiceBean;
 import com.example.demowithtests.util.config.mapstruct.PassportMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -22,6 +25,8 @@ public class PassportControllerBean implements PassportController {
         final var passportTemp = passportService.create(passport);
         return mapper.toDto(passportTemp);
     }
+
+
 
     @Override
     public PassportDto getPassportById(Integer id) {

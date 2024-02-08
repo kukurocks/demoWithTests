@@ -1,9 +1,10 @@
 package com.example.demowithtests.dto;
 
 import com.example.demowithtests.domain.Gender;
+import com.example.demowithtests.dto.address.AddressDto;
 import com.example.demowithtests.util.annotation.dto.BlockedEmailDomains;
-import com.example.demowithtests.util.annotation.dto.CountryRightFormed;
 import com.example.demowithtests.util.annotation.dto.Severity;
+import com.example.demowithtests.util.annotation.entity.Name;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,7 @@ public class EmployeeDto {
 
     public Integer id;
     public boolean deleted;
+    @Name
     @NotNull
     @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
     @Schema(description = "Name of an employee.", example = "Billy", required = true)

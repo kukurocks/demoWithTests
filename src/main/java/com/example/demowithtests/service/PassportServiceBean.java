@@ -1,5 +1,6 @@
 package com.example.demowithtests.service;
 
+import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Image;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.repository.ImageRepository;
@@ -9,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
+
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +21,8 @@ public class PassportServiceBean implements PassportService {
 
     private final PassportRepository passportRepository;
     private final ImageRepository imageRepository;
+
+
 
     @Override
     public Passport create(Passport passport) {
@@ -39,17 +45,18 @@ public class PassportServiceBean implements PassportService {
         if (passport.getImage() == null) {
             throw new PassportIsHandedException("Passport with id:" + id + " without photo");
         }
-
         passport.setIsHanded(true);
         return passportRepository.save(passport);
     }
 
     @Override
     public Passport cancel(Passport passport) {
-        if(passport.getPreviousOwner()!=null){
-            throw new PassportIsHandedException("The passport has already been canceled");
+        if (!passport.getIsHanded()) {
+            throw new PassportIsHandedException("Cannot cancel a handed passport");
         }
-        passport.setPreviousOwner(passport.getId());
+        passport.setIsHanded(false);
+        passport.setPrevOwner(passport.getEmployee().getId());
+
         return passportRepository.save(passport);
     }
 
@@ -60,4 +67,6 @@ public class PassportServiceBean implements PassportService {
         passport.setImage(image);
         return passportRepository.save(passport);
     }
+
+
 }

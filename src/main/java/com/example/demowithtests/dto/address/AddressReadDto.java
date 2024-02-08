@@ -1,4 +1,4 @@
-package com.example.demowithtests.dto;
+package com.example.demowithtests.dto.address;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

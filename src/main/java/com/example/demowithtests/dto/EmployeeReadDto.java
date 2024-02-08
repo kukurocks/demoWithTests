@@ -1,8 +1,7 @@
 package com.example.demowithtests.dto;
 
 import com.example.demowithtests.domain.Gender;
-import com.example.demowithtests.util.annotation.dto.BlockedEmailDomains;
-import com.example.demowithtests.util.annotation.dto.Severity;
+import com.example.demowithtests.dto.address.AddressReadDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,8 +11,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 

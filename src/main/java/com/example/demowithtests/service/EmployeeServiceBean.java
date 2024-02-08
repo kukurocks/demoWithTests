@@ -39,7 +39,7 @@ public class EmployeeServiceBean implements EmployeeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
+
 
     @Override
     public Employee cancelPassport(Integer empId) {
@@ -48,7 +48,10 @@ public class EmployeeServiceBean implements EmployeeService {
         Passport passport = Optional.ofNullable(employee.getPassport())
                 .orElseThrow(ResourceNotFoundException::new);
         passportService.cancel(passport);
+
+
         employee.setPassport(null);
+
        return employeeRepository.save(employee);
     }
 
@@ -60,6 +63,7 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
     @Override
+    @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
     // @Transactional(propagation = Propagation.MANDATORY)
     public Employee create(Employee employee) {
         Set<Address> addresses = employee.getAddresses();

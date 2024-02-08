@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface EmployeeService {
 
-    Employee cancelPassport(Integer empId);
+    Employee  cancelPassport(Integer empId);
 
     Employee handPassport(Integer employeeId, Integer passportId);
 

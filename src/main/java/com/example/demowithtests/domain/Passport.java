@@ -1,6 +1,7 @@
 package com.example.demowithtests.domain;
 
 import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -42,5 +43,7 @@ public class Passport {
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
 
-    private Integer previousOwner;
+    private Integer prevOwner;
+
+
 }

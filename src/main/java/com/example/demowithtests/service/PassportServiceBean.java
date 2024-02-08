@@ -30,15 +30,14 @@ public class PassportServiceBean implements PassportService {
     }
 
     @Override
-    public Passport hand(Integer id) {
+    public Passport handOver(Integer id) {
 
-        Passport passport = passportRepository.findById(id).orElseThrow(
-                () -> new PassportIsHandedException("Passport with id = " + id + " does not exist"));
+        Passport passport = passportRepository.findById(id).orElseThrow();
         if (passport.getIsHanded()) {
-            throw new PassportIsHandedException("The passport with id = " + id + " has already been handed");
+            throw new PassportIsHandedException("Passport with id:" + id + " has already been handed");
         }
         if (passport.getImage() == null) {
-            throw new PassportIsHandedException("The passport image for id = " + id + " is not available");
+            throw new PassportIsHandedException("Passport with id:" + id + " without photo");
         }
 
         passport.setIsHanded(true);
@@ -46,8 +45,12 @@ public class PassportServiceBean implements PassportService {
     }
 
     @Override
-    public Passport cancel(Integer id) {
-        return null;
+    public Passport cancel(Passport passport) {
+        if(passport.getPreviousOwner()!=null){
+            throw new PassportIsHandedException("The passport has already been canceled");
+        }
+        passport.setPreviousOwner(passport.getId());
+        return passportRepository.save(passport);
     }
 
     @Override

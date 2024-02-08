@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +29,13 @@ public class EmployeeControllerBean implements EmployeeController {
 
     @Override
     public EmployeeDto setPassportForEmployee(PassportReadDto passportReadDto) {
-        return employeeService.handPassport(passportReadDto.) ;
+        return mapper.toDto(employeeService.handPassport(
+                passportReadDto.userId(), passportReadDto.passportId())) ;
+    }
+
+    @Override
+    public EmployeeDto cancelPassport(Integer empId) {
+        return mapper.toDto(employeeService.cancelPassport(empId));
     }
 
     public EmployeeReadDto saveEmployee(EmployeeDto requestForSave) {

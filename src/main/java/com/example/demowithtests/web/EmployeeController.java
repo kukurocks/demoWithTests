@@ -24,7 +24,11 @@ public interface EmployeeController {
 
     @PatchMapping("/users/passport")
     @ResponseStatus(HttpStatus.OK)
-    EmployeeDto setPassportForEmployee(@RequestBody PassportReadDto);
+    EmployeeDto setPassportForEmployee(@RequestBody PassportReadDto passportReadDto);
+
+    @PatchMapping("/users/cancelPassport{empId}")
+    @ResponseStatus(HttpStatus.OK)
+    EmployeeDto cancelPassport(@PathVariable Integer empId);
 
     //save user in db
     @PostMapping("/users")

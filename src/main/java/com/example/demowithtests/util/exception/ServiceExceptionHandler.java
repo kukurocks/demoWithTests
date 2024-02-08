@@ -22,6 +22,10 @@ public class ServiceExceptionHandler {
     protected ResponseEntity<MyExceptionHandler> handleNonUniqueException() {
         return new ResponseEntity<>(new MyExceptionHandler("Employees by this email more than one"), HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(PassportIsHandedException.class)
+    protected ResponseEntity<MyExceptionHandler> handlePassportIsHandedException(PassportIsHandedException ex) {
+        return new ResponseEntity<>(new MyExceptionHandler(ex.getMessage()), HttpStatus.CONFLICT);
+    }
 
 
     @Data

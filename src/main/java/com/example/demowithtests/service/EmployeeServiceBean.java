@@ -5,11 +5,7 @@ import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.repository.EmployeeRepository;
-import com.example.demowithtests.repository.PassportRepository;
-import com.example.demowithtests.util.exception.ListEmptyException;
-import com.example.demowithtests.util.exception.NonUniqueException;
-import com.example.demowithtests.util.exception.ResourceWasDeletedException;
-import com.example.demowithtests.util.exception.UserNotFoundException;
+import com.example.demowithtests.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,9 +32,20 @@ public class EmployeeServiceBean implements EmployeeService {
 
 
     @Override
-    public Employee handPassport(Integer employeeId, Integer passportId) {
+    public Employee cancelPassport(Integer empId) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(ResourceNotFoundException::new);
+        Passport passport = Optional.ofNullable(employee.getPassport())
+                .orElseThrow(ResourceNotFoundException::new);
+        passportService.cancel(passport);
+        employee.setPassport(null);
+       return employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee handPassport(Integer employeeId, Integer passportId) throws PassportIsHandedException {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow();
-        employee.setPassport(passportService.hand(passportId));
+        employee.setPassport(passportService.handOver(passportId));
         return employeeRepository.save(employee);
     }
 

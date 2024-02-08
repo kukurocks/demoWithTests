@@ -10,9 +10,9 @@ public interface PassportService {
 
     Passport getById(Integer id);
 
-    Passport hand(Integer id);
+    Passport handOver(Integer id);
 
-    Passport cancel(Integer id);
+    Passport cancel(Passport passport);
 
     Passport addImage(Integer passportId, Integer imageId);
 }

@@ -11,7 +11,7 @@ import javax.validation.Valid;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface PassportController {
     @PostMapping("/passport")
-    PassportDto savePassport(@RequestBody @Valid PassportDto passportDto);
+    PassportDto create(@RequestBody @Valid PassportDto passportDto);
 
     @GetMapping("/passport/{id}")
     PassportDto getPassportById(@PathVariable Integer id);

@@ -59,5 +59,10 @@ public class ImageServiceBean implements ImageService{
             }
         }).orElse(null);
     }
+
+    @Override
+    public void delete(Integer id) {
+        imageRepository.deleteById(id);
+    }
 }
 

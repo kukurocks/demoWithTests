@@ -47,4 +47,9 @@ public class ImageControllerBean implements ImageController {
                 .contentType(MediaType.valueOf(IMAGE_PNG_VALUE))
                 .body(imageData);
     }
+
+    @Override
+    public void deleteImage(Integer id) {
+        imageService.delete(id);
+    }
 }

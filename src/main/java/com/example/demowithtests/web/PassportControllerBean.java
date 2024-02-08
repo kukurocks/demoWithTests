@@ -17,7 +17,7 @@ public class PassportControllerBean implements PassportController {
     private final PassportMapper mapper;
 
     @Override
-    public PassportDto savePassport(PassportDto passportDto) {
+    public PassportDto create (PassportDto passportDto) {
         Passport passport = mapper.toPassport(passportDto);
         final var passportTemp = passportService.create(passport);
         return mapper.toDto(passportTemp);

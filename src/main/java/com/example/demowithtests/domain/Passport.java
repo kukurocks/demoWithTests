@@ -10,6 +10,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
+@Getter
 @EqualsAndHashCode(exclude = "employee")
 @Entity
 @Table(name = "passports")
@@ -39,4 +41,6 @@ public class Passport {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
+
+    private Integer previousOwner;
 }

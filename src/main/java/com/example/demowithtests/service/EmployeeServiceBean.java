@@ -43,6 +43,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee cancelPassport(Integer empId) {
+
         Employee employee = employeeRepository.findById(empId)
                 .orElseThrow(ResourceNotFoundException::new);
         Passport passport = Optional.ofNullable(employee.getPassport())
@@ -58,6 +59,9 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     public Employee handPassport(Integer employeeId, Integer passportId) throws PassportIsHandedException {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow();
+        if (employee.getPassport() != null) {
+            throw new PassportIsHandedException("Employee must have only one passport");
+        }
         employee.setPassport(passportService.handOver(passportId));
         return employeeRepository.save(employee);
     }

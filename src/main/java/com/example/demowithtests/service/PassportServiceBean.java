@@ -39,6 +39,7 @@ public class PassportServiceBean implements PassportService {
     public Passport handOver(Integer id) {
 
         Passport passport = passportRepository.findById(id).orElseThrow();
+
         if (passport.getIsHanded()) {
             throw new PassportIsHandedException("Passport with id:" + id + " has already been handed");
         }
@@ -51,6 +52,7 @@ public class PassportServiceBean implements PassportService {
 
     @Override
     public Passport cancel(Passport passport) {
+
         if (!passport.getIsHanded()) {
             throw new PassportIsHandedException("Cannot cancel a handed passport");
         }

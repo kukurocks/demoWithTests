@@ -33,7 +33,6 @@ public class Employee {
     @JoinColumn(name = "passport_id", referencedColumnName = "id")
     private Passport passport;
 
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

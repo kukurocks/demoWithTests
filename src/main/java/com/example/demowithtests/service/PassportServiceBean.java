@@ -1,6 +1,5 @@
 package com.example.demowithtests.service;
 
-import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Image;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.repository.ImageRepository;
@@ -10,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -47,11 +45,14 @@ public class PassportServiceBean implements PassportService {
             throw new PassportIsHandedException("Passport with id:" + id + " without photo");
         }
         passport.setIsHanded(true);
+        passport.setExpireDate(LocalDateTime.now().plusYears(5L));
+
+
         return passportRepository.save(passport);
     }
 
     @Override
-    public Passport cancel(Passport passport) {
+    public void cancel(Passport passport) {
 
         if (!passport.getIsHanded()) {
             throw new PassportIsHandedException("Cannot cancel a handed passport");
@@ -59,7 +60,7 @@ public class PassportServiceBean implements PassportService {
         passport.setIsHanded(false);
         passport.setPrevOwner(passport.getEmployee().getId());
 
-        return passportRepository.save(passport);
+        passportRepository.save(passport);
     }
 
     @Override

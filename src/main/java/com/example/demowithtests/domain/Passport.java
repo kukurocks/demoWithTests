@@ -1,5 +1,6 @@
 package com.example.demowithtests.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,10 +38,12 @@ public class Passport {
 
     @ToString.Exclude
     @OneToOne(mappedBy = "passport")
+    @JsonIgnore
     private Employee employee;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
+    @JsonIgnore
     private Image image;
 
     private Integer prevOwner;

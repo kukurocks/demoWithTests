@@ -1,6 +1,7 @@
 package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.EmployeesWorkPlacesKey;
 import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.util.exception.PassportIsHandedException;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeService {
+
+
+    Employee addWorkPlace(Integer empId, Integer wpId);
 
     Employee  cancelPassport(Integer empId);
 

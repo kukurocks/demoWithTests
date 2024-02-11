@@ -22,6 +22,10 @@ import java.util.Optional;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface EmployeeController {
 
+    @PatchMapping("/users/{empId}/workPlace/{wpId}")
+    @ResponseStatus(HttpStatus.OK)
+    Employee addEmployeeWorkPlace(@PathVariable Integer empId, @PathVariable Integer wpId);
+
     @PatchMapping("/users/passport")
     @ResponseStatus(HttpStatus.OK)
     EmployeeDto setPassportForEmployee(@RequestBody PassportReadDto passportReadDto);

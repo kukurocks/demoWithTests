@@ -5,6 +5,7 @@ import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.dto.PassportReadDto;
 import com.example.demowithtests.service.EmployeeService;
+import com.example.demowithtests.service.WorkPlaceService;
 import com.example.demowithtests.util.annotation.Profiler;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,12 @@ public class EmployeeControllerBean implements EmployeeController {
     private final EmployeeMapper mapper;
     private final EmployeeService employeeService;
 
-    //save user in db
+
+    @Override
+    public Employee addEmployeeWorkPlace(Integer empId, Integer wpId) {
+
+        return employeeService.addWorkPlace(empId,wpId);
+    }
 
     @Override
     public EmployeeDto setPassportForEmployee(PassportReadDto passportReadDto) {

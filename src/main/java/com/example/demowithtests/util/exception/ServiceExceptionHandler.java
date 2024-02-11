@@ -26,11 +26,15 @@ public class ServiceExceptionHandler {
     protected ResponseEntity<MyExceptionHandler> handlePassportIsHandedException(PassportIsHandedException ex) {
         return new ResponseEntity<>(new MyExceptionHandler(ex.getMessage()), HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(WorkPlaceIsHandedException.class)
+    protected ResponseEntity<MyExceptionHandler> handleWorkPlaceIsHandedException(WorkPlaceIsHandedException ex) {
+        return new ResponseEntity<>(new MyExceptionHandler(ex.getMessage()), HttpStatus.CONFLICT);
+    }
 
 
     @Data
     @AllArgsConstructor
-    private static class MyExceptionHandler {
+    public static class MyExceptionHandler {
         private String message;
     }
 }

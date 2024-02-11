@@ -1,10 +1,8 @@
 package com.example.demowithtests.service;
 
-import com.example.demowithtests.domain.Address;
-import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.domain.Gender;
-import com.example.demowithtests.domain.Passport;
+import com.example.demowithtests.domain.*;
 import com.example.demowithtests.repository.EmployeeRepository;
+import com.example.demowithtests.repository.WorkPlaceRepository;
 import com.example.demowithtests.util.annotation.Profiler;
 import com.example.demowithtests.util.annotation.entity.ActivateCustomAnnotations;
 import com.example.demowithtests.util.annotation.entity.Name;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Profiler
@@ -35,11 +34,32 @@ public class EmployeeServiceBean implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final PassportService passportService;
+    private final WorkPlaceService workPlaceService;
+    private final EmployeeWorkPlaceService employeeWorkPlaceService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Override
+    public Employee addWorkPlace(Integer empId, Integer wpId) {
+        Employee employee = employeeRepository.findById(empId).orElseThrow(ResourceNotFoundException::new);
+        WorkPlace workPlace = workPlaceService.getWorkPlace(wpId);
+        if (workPlace.getHasFreePlaces().equals(Boolean.FALSE))
+            throw new WorkPlaceIsHandedException("Work Place with id:" + wpId + " do not have vacancy place");
+        if (employeeWorkPlaceService.getCountHeldWorkPlacesOfEmployee(empId) == 3) {
+            throw new WorkPlaceIsHandedException("Employee already has 3 held work places");
+        }
+        employeeWorkPlaceService.addConnection(employee, workPlace);
+        Integer freeWorkPlaces = workPlace.getQuantity() - employeeWorkPlaceService.getCountActiveBusyPlaces(wpId);
+        workPlace.setFreePlacesCount(freeWorkPlaces);
+        if (freeWorkPlaces == 0)
+            workPlace.setHasFreePlaces(Boolean.FALSE);
 
+        workPlaceService.addWorkPlace(workPlace);
+
+
+        return getById(empId);
+    }
 
     @Override
     public Employee cancelPassport(Integer empId) {
@@ -53,7 +73,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
         employee.setPassport(null);
 
-       return employeeRepository.save(employee);
+        return employeeRepository.save(employee);
     }
 
     @Override
@@ -214,16 +234,6 @@ public class EmployeeServiceBean implements EmployeeService {
 
            }*/
     // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
-
-
-
-
-
-
-
-
-
-
 
    /* public boolean isValid(Employee employee) {
         String regex = "^[0-9]{10}$";

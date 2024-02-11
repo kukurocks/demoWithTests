@@ -36,4 +36,7 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @OneToMany(mappedBy = "employee")
+    private Set<EmployeesWorkPlaces> employeesWorkPlaces = new HashSet<>();
+
 }

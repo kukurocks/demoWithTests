@@ -56,8 +56,6 @@ public class EmployeeServiceBean implements EmployeeService {
             workPlace.setHasFreePlaces(Boolean.FALSE);
 
         workPlaceService.addWorkPlace(workPlace);
-
-
         return getById(empId);
     }
 
@@ -69,8 +67,6 @@ public class EmployeeServiceBean implements EmployeeService {
         Passport passport = Optional.ofNullable(employee.getPassport())
                 .orElseThrow(ResourceNotFoundException::new);
         passportService.cancel(passport);
-
-
         employee.setPassport(null);
 
         return employeeRepository.save(employee);

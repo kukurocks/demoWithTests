@@ -26,11 +26,7 @@ public class EmployeeWorkPlaceServiceBean implements EmployeeWorkPlaceService{
             connection.setEmployee(employee);
             connection.setWorkPlace(workPlace);
         }
-
-
-
         return repository.save(connection);
-
     }
 
     @Override
@@ -42,7 +38,6 @@ public class EmployeeWorkPlaceServiceBean implements EmployeeWorkPlaceService{
                         .wpId(workPlaceId).build())
                 .orElse(null);
     }
-
     @Override
     public void deleteConnection(Integer employeeId, Integer workPlaceId) {
 
@@ -50,6 +45,7 @@ public class EmployeeWorkPlaceServiceBean implements EmployeeWorkPlaceService{
 
     @Override
     public Integer getCountActiveBusyPlaces(Integer id) {
+
         return repository.selectCountOfActiveWorkPlacesById(id);
     }
 

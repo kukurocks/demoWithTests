@@ -87,11 +87,6 @@ public class PassportServiceBean implements PassportService {
     }
 
     @Override
-    public void deleteAll() {
-        passportRepository.deleteAll();
-    }
-
-    @Override
     @Transactional
     public void deleteAllWithEntityManager() {
 

@@ -2,15 +2,10 @@ package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.*;
 import com.example.demowithtests.repository.EmployeeRepository;
-import com.example.demowithtests.repository.WorkPlaceRepository;
 import com.example.demowithtests.util.annotation.Profiler;
 import com.example.demowithtests.util.annotation.entity.ActivateCustomAnnotations;
 import com.example.demowithtests.util.annotation.entity.Name;
 import com.example.demowithtests.util.annotation.entity.ToLowerCase;
-import com.example.demowithtests.util.exception.ListEmptyException;
-import com.example.demowithtests.util.exception.NonUniqueException;
-import com.example.demowithtests.util.exception.ResourceWasDeletedException;
-import com.example.demowithtests.util.exception.UserNotFoundException;
 import com.example.demowithtests.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Profiler
@@ -53,7 +47,7 @@ public class EmployeeServiceBean implements EmployeeService {
             throw new WorkPlaceIsHandedException("Employee already has 3 held work places");
         }
         employeeWorkPlaceService.addConnection(employee, workPlace);
-        Integer freeWorkPlaces = workPlace.getQuantity() - employeeWorkPlaceService.getCountActiveBusyPlaces(wpId);
+        int freeWorkPlaces = workPlace.getQuantity() - employeeWorkPlaceService.getCountActiveBusyPlaces(wpId);
         workPlace.setFreePlacesCount(freeWorkPlaces);
         if (freeWorkPlaces == 0)
             workPlace.setHasFreePlaces(Boolean.FALSE);

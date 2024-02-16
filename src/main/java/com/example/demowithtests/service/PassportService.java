@@ -21,8 +21,6 @@ public interface PassportService {
 
    Map<Integer,List<PassportEvent>>  getHistoryByEmployeePassport(Integer emplId);
 
-   void deleteAll();
-
    void deleteAllWithEntityManager();
 
 

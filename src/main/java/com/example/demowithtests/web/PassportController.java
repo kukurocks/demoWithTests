@@ -1,7 +1,5 @@
 package com.example.demowithtests.web;
 
-import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.domain.PassportEvent;
 import com.example.demowithtests.dto.ImageReadDto;
 import com.example.demowithtests.dto.PassportDto;

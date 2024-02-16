@@ -1,13 +1,10 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.domain.PassportEvent;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.dto.PassportReadDto;
 import com.example.demowithtests.service.EmployeeService;
-import com.example.demowithtests.service.WorkPlaceService;
-import com.example.demowithtests.util.annotation.Profiler;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,8 +77,7 @@ public class EmployeeControllerBean implements EmployeeController {
 
     public EmployeeReadDto getEmployeeById(Integer id) {
         var employee = employeeService.getById(id);
-        var dto = EmployeeMapper.INSTANCE.toReadDto(employee);
-        return dto;
+        return EmployeeMapper.INSTANCE.toReadDto(employee);
     }
 
 

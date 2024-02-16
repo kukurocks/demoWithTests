@@ -46,7 +46,8 @@ public class Passport {
     @JsonIgnore
     private Image image;
 
-    private Integer prevOwner;
+    @Embedded
+    PassportEvent passportEvent;
 
 
 }

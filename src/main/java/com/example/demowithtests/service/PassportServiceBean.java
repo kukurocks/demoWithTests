@@ -2,6 +2,7 @@ package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Image;
 import com.example.demowithtests.domain.Passport;
+import com.example.demowithtests.domain.PassportEvent;
 import com.example.demowithtests.repository.ImageRepository;
 import com.example.demowithtests.repository.PassportRepository;
 import com.example.demowithtests.util.exception.PassportIsHandedException;
@@ -9,7 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -20,6 +27,8 @@ public class PassportServiceBean implements PassportService {
     private final PassportRepository passportRepository;
     private final ImageRepository imageRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
 
 
     @Override
@@ -37,16 +46,14 @@ public class PassportServiceBean implements PassportService {
     public Passport handOver(Integer id) {
 
         Passport passport = passportRepository.findById(id).orElseThrow();
-
         if (passport.getIsHanded()) {
             throw new PassportIsHandedException("Passport with id:" + id + " has already been handed");
         }
-        if (passport.getImage() == null) {
+       /* if (passport.getImage() == null) {
             throw new PassportIsHandedException("Passport with id:" + id + " without photo");
-        }
+        }*/
         passport.setIsHanded(true);
         passport.setExpireDate(LocalDateTime.now().plusYears(5L));
-
 
         return passportRepository.save(passport);
     }
@@ -58,7 +65,6 @@ public class PassportServiceBean implements PassportService {
             throw new PassportIsHandedException("Cannot cancel a handed passport");
         }
         passport.setIsHanded(false);
-        passport.setPrevOwner(passport.getEmployee().getId());
 
         passportRepository.save(passport);
     }
@@ -71,5 +77,24 @@ public class PassportServiceBean implements PassportService {
         return passportRepository.save(passport);
     }
 
+    @Override
+    public Map<Integer,List<PassportEvent>> getHistoryByEmployeePassport(Integer emplId) {
 
+        List<PassportEvent> passportEvents = passportRepository.getHistoryByEmployee(emplId);
+        Map<Integer, List<PassportEvent>> historyByEmployeePassport = new HashMap<>();
+        historyByEmployeePassport.put(passportRepository.findByEmployeeId(emplId), passportEvents);
+        return historyByEmployeePassport;
+    }
+
+    @Override
+    public void deleteAll() {
+        passportRepository.deleteAll();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllWithEntityManager() {
+
+        entityManager.createQuery("DELETE FROM Passport").executeUpdate();
+    }
 }

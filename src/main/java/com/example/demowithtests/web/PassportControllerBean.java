@@ -1,7 +1,7 @@
 package com.example.demowithtests.web;
 
-import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Passport;
+import com.example.demowithtests.domain.PassportEvent;
 import com.example.demowithtests.dto.ImageReadDto;
 import com.example.demowithtests.dto.PassportDto;
 import com.example.demowithtests.service.PassportServiceBean;
@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -25,13 +26,16 @@ public class PassportControllerBean implements PassportController {
         final var passportTemp = passportService.create(passport);
         return mapper.toDto(passportTemp);
     }
-
-
-
     @Override
     public PassportDto getPassportById(Integer id) {
         Passport passport = passportService.getById(id);
         return mapper.toDto(passport);
+    }
+
+    @Override
+    public Map<Integer,List<PassportEvent>> getHistory(Integer emplId) {
+
+        return passportService.getHistoryByEmployeePassport(emplId);
     }
 
     @Override
@@ -40,5 +44,10 @@ public class PassportControllerBean implements PassportController {
         var passportId = imageReadDto.passportId();
         var passport = passportService.addImage(imageId, passportId);
         return mapper.toDto(passport);
+    }
+
+    @Override
+    public void deleteAll() {
+        passportService.deleteAllWithEntityManager();
     }
 }

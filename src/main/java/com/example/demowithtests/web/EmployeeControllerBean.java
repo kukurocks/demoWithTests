@@ -1,6 +1,7 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.PassportEvent;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.dto.PassportReadDto;
@@ -38,8 +39,9 @@ public class EmployeeControllerBean implements EmployeeController {
 
     @Override
     public EmployeeDto setPassportForEmployee(PassportReadDto passportReadDto) {
-        return mapper.toDto(employeeService.handPassport(
-                passportReadDto.userId(), passportReadDto.passportId())) ;
+
+        return mapper.toDto(employeeService.handPassport(passportReadDto.userId(), passportReadDto.passportId()));
+
     }
 
     @Override

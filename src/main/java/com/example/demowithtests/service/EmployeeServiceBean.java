@@ -14,6 +14,7 @@ import com.example.demowithtests.util.exception.UserNotFoundException;
 import com.example.demowithtests.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +37,8 @@ public class EmployeeServiceBean implements EmployeeService {
     private final PassportService passportService;
     private final WorkPlaceService workPlaceService;
     private final EmployeeWorkPlaceService employeeWorkPlaceService;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -68,18 +71,25 @@ public class EmployeeServiceBean implements EmployeeService {
                 .orElseThrow(ResourceNotFoundException::new);
         passportService.cancel(passport);
         employee.setPassport(null);
+        Employee savedEmployee = employeeRepository.save(employee);
+        eventPublisher.publishEvent(new PassportEvent(Action.CANCEL, empId));
 
-        return employeeRepository.save(employee);
+        return savedEmployee;
     }
 
     @Override
     public Employee handPassport(Integer employeeId, Integer passportId) throws PassportIsHandedException {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow();
+
         if (employee.getPassport() != null) {
             throw new PassportIsHandedException("Employee must have only one passport");
         }
         employee.setPassport(passportService.handOver(passportId));
-        return employeeRepository.save(employee);
+
+        Employee savedEmployee = employeeRepository.save(employee);
+        eventPublisher.publishEvent(new PassportEvent(Action.HANDOVER, savedEmployee.getId()));
+
+        return savedEmployee;
     }
 
     @Override
@@ -95,6 +105,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee createEM(Employee employee) {
+
         return entityManager.merge(employee);
     }
 
@@ -208,29 +219,15 @@ public class EmployeeServiceBean implements EmployeeService {
     public void removeById(Integer id) {
 
         Employee employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        // .orElseThrow(ResourceNotFoundException::new);
         if (employee.getDeleted()) {
             throw new ResourceWasDeletedException();
         }
 
         employee.setDeleted(true);
-        // employeeRepository.delete(employee.get());
         employeeRepository.save(employee);
 
 
     }
-    //repository.deleteById(id);
-    // var employee = employeeRepository.findById(id).orElseThrow();
-        /*if(!employee.isPresent()){
-            throw new UserNotFoundException();
-
-        }
-         if(!employee.get().isDeleted()){
-             throw new ResourceWasDeletedException();
-
-           }*/
-    // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
-
    /* public boolean isValid(Employee employee) {
         String regex = "^[0-9]{10}$";
         Pattern pattern = Pattern.compile(regex);
@@ -271,11 +268,6 @@ public class EmployeeServiceBean implements EmployeeService {
             throw new ListEmptyException();
         }
     }
-
-    /*@Override
-    public Page<Employee> findByCountryContaining(String country, Pageable pageable) {
-        return employeeRepository.findByCountryContaining(country, pageable);
-    }*/
 
     @Override
     public Page<Employee> findByCountryContaining(String country, int page, int size, List<String> sortList, String sortOrder) {

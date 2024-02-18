@@ -1,10 +1,8 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Address;
-import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.address.AddressDto;
 import com.example.demowithtests.service.AddressService;
-import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.AddressMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -18,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class AddressControllerBean implements AddressController{
 
-    private final EmployeeService employeeService;
     private final AddressService addressService;
     private final AddressMapper mapper;
 

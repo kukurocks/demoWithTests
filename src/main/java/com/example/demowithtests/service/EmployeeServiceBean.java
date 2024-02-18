@@ -107,7 +107,6 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee createEM(Employee employee) {
-
         return entityManager.merge(employee);
     }
 

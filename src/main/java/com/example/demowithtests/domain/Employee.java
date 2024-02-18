@@ -1,6 +1,7 @@
 package com.example.demowithtests.domain;
 
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Builder
 @ToString
 @EqualsAndHashCode
+@Where(clause = "deleted<>true")
 public class Employee {
 
     @Id
@@ -23,7 +25,6 @@ public class Employee {
     private String name;
     private String email;
     private String country;
-
     private Boolean deleted;
 
     @OneToMany(cascade = CascadeType.ALL)

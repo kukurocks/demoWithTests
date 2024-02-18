@@ -30,6 +30,4 @@ public class Address {
 
     @Column(name = "street")
     private String street;
-
-
 }

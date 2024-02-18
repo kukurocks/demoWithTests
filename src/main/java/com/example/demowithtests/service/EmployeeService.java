@@ -68,4 +68,8 @@ public interface EmployeeService {
 
    Page<Employee> getActiveAddressesByCountry(String country, Pageable pageable);
 
+     List<String[]> findEmployeeWithThemEmailLength (String employee, String sortBY);
+
+    List<Employee> getByName (String name);
+
 }

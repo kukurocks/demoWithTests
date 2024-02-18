@@ -1,5 +1,17 @@
 # Spring Boot configuration
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: my-email@gmail.com
+    password: my-email-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   #application:
   # name: service
   #main:
@@ -20,6 +32,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     #open-in-view: false
     #generate-ddl: true
+    properties:
+      hibernate:
+        generate_statistics: true
   flyway:
     #    locations: filesystem:.\src\main\resources\db\migration
     enabled: false

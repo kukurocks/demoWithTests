@@ -22,4 +22,5 @@ public interface EmployeeMapper {
  EmployeeReadDto toReadDto(Employee employee);
 
  List<EmployeeReadDto> toListReadDto(List<Employee> list);
+
 }

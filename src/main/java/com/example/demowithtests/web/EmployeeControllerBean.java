@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
-
 @RestController
 @AllArgsConstructor
 @Slf4j
@@ -135,7 +134,6 @@ public class EmployeeControllerBean implements EmployeeController {
 
         return employeeService.findEmployeeByEmail(email);
     }
-
     public List<EmployeeReadDto> findAllCountry() {
 
         List<Employee> allWithSyntaxError = employeeService.findAllWithSyntaxError();
@@ -145,5 +143,11 @@ public class EmployeeControllerBean implements EmployeeController {
 
     public List<Employee> getByCountry(String country) {
         return employeeService.filterByCountry(country);
+    }
+
+    @Override
+    public List<String[]> findEmailLength(String employee, String sortBY) {
+        return employeeService.findEmployeeWithThemEmailLength(employee, sortBY);
+
     }
 }

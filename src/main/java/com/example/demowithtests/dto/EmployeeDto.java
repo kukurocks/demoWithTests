@@ -6,15 +6,10 @@ import com.example.demowithtests.util.annotation.dto.BlockedEmailDomains;
 import com.example.demowithtests.util.annotation.dto.Severity;
 import com.example.demowithtests.util.annotation.entity.Name;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 

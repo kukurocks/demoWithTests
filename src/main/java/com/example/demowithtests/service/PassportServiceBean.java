@@ -1,6 +1,5 @@
 package com.example.demowithtests.service;
 
-import com.example.demowithtests.domain.Action;
 import com.example.demowithtests.domain.Image;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.domain.PassportEvent;

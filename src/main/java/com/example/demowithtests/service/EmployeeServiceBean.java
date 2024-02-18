@@ -176,6 +176,16 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
     @Override
+    public List<String[]> findEmployeeWithThemEmailLength(String employee, String sortBY) {
+        return employeeRepository.findByAsArrayAndSort(employee, Sort.by(sortBY));
+    }
+
+    @Override
+    public List<Employee> getByName(String name) {
+        return null;
+    }
+
+    @Override
     public void removeById(Integer id) {
 
         Employee employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);

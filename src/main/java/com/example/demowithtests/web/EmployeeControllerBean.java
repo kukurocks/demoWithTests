@@ -90,6 +90,11 @@ public class EmployeeControllerBean implements EmployeeController {
         return mapper.toDto(employeeService.updateById(id, mapper.fromDto(employeeDto)));
     }
 
+    @Override
+    public List<Employee> getEmployeeByName(String name) {
+        return employeeService.getByName(name);
+    }
+
 
     public void removeEmployeeById(Integer id) {
         employeeService.removeById(id);

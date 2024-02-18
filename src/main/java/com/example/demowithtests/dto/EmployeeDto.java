@@ -18,11 +18,11 @@ public class EmployeeDto {
     @Name
     @NotNull
     @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
-    @Schema(description = "Name of an employee.", example = "Billy", required = true)
+    @Schema(description = "Name of an employee.", example = "Billy")
     public String name;
 
     // @CountryRightFormed
-    @Schema(description = "Name of the country.", example = "England", required = true)
+    @Schema(description = "Name of the country.", example = "England")
     public String country;
 
     public Boolean deleted = Boolean.FALSE;
@@ -30,7 +30,7 @@ public class EmployeeDto {
     @Email
     @NotNull
     @BlockedEmailDomains(payload = Severity.Error.class)
-    @Schema(description = "Email address of an employee.", example = "billys@mail.com", required = true)
+    @Schema(description = "Email address of an employee.", example = "billys@mail.com")
     public String email;
 
     public Gender gender;

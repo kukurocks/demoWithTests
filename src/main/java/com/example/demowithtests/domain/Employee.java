@@ -23,7 +23,8 @@ public class Employee {
     private String name;
     private String email;
     private String country;
-    private  Boolean deleted;
+
+    private Boolean deleted;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "employee_id")

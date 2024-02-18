@@ -1,5 +1,6 @@
 package com.example.demowithtests.service;
 
+import com.example.demowithtests.domain.Action;
 import com.example.demowithtests.domain.Image;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.domain.PassportEvent;
@@ -89,7 +90,6 @@ public class PassportServiceBean implements PassportService {
     @Override
     @Transactional
     public void deleteAllWithEntityManager() {
-
         entityManager.createQuery("DELETE FROM Passport").executeUpdate();
     }
 }

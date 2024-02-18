@@ -7,13 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleException(DataIntegrityViolationException e) {
+        return ResponseEntity.badRequest().body("Country cannot be null");
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {

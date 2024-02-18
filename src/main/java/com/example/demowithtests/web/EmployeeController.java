@@ -22,6 +22,12 @@ import java.util.Optional;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface EmployeeController {
 
+    @GetMapping("users/active_address")
+    @ResponseStatus(HttpStatus.OK)
+    Page<Employee> readActiveAddressesByCountry(@RequestParam String country,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "5") int size);
+
     @PatchMapping("/users/{empId}/workPlace/{wpId}")
     @ResponseStatus(HttpStatus.OK)
     Employee addEmployeeWorkPlace(@PathVariable Integer empId, @PathVariable Integer wpId);

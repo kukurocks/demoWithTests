@@ -18,30 +18,27 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class EmployeeDto {
 
-    public Integer id;
-    public boolean deleted;
     @Name
     @NotNull
     @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
     @Schema(description = "Name of an employee.", example = "Billy", required = true)
     public String name;
 
-   // @CountryRightFormed
+    // @CountryRightFormed
     @Schema(description = "Name of the country.", example = "England", required = true)
     public String country;
+
+    public Boolean deleted = Boolean.FALSE;
 
     @Email
     @NotNull
     @BlockedEmailDomains(payload = Severity.Error.class)
     @Schema(description = "Email address of an employee.", example = "billys@mail.com", required = true)
     public String email;
-    public Instant startDate = Instant.now();
+
     public Gender gender;
+
     public Set<AddressDto> addresses = new HashSet<>();
 }

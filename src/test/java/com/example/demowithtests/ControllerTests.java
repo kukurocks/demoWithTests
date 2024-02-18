@@ -145,35 +145,28 @@ public class ControllerTests {
     @DisplayName("PUT API -> /api/users/{id}")
     @WithMockUser(roles = "ADMIN")
     public void updatePassByIdTest() throws Exception {
-        var response = EmployeeDto.builder().id(1).build();
-        var employee = Employee.builder().id(1).name("name").gender(Gender.M).country("country").email("email").build();
 
-        when(service.updateNameById(any(Integer.class), any(String.class))).thenReturn(Optional.ofNullable(employee));
-        when(service.updateGenderById(any(Integer.class), any(Gender.class))).thenReturn(Optional.ofNullable(employee));
-        when(service.updateCountryById(any(Integer.class), any(String.class))).thenReturn(Optional.ofNullable(employee));
-        when(service.updateEmailById(any(Integer.class), any(String.class))).thenReturn(Optional.ofNullable(employee));
-        when(service.getById(eq(1))).thenReturn(employee);
+        EmployeeDto response = new EmployeeDto();
+        response.name = "name";
+        var employee = Employee.builder().name("name").build();
+
         when(employeeMapper.toDto(any(Employee.class))).thenReturn(response);
         when(employeeMapper.fromDto(any(EmployeeDto.class))).thenReturn(employee);
-        // when(service.updateById(eq(1), any(Employee.class))).thenReturn(employee);
-
+        when(service.updateById(eq(1), any(Employee.class))).thenReturn(employee);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
                 .put("/api/users/1")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(employee));
 
-
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$.name", is("name")));
 
-        verify(service).updateNameById(eq(1), any(String.class));
-        verify(service).updateGenderById(eq(1), any(Gender.class));
-        verify(service).updateCountryById(eq(1), any(String.class));
-        verify(service).updateEmailById(eq(1), any(String.class));
+        verify(service).updateById(eq(1), any(Employee.class));
     }
+
+
 
     @Test
     @DisplayName("DELETE API -> /api/users/{id}")

@@ -10,6 +10,7 @@ import com.example.demowithtests.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Profiler
 @RequiredArgsConstructor
@@ -74,7 +77,6 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     public Employee handPassport(Integer employeeId, Integer passportId) throws PassportIsHandedException {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow();
-
         if (employee.getPassport() != null) {
             throw new PassportIsHandedException("Employee must have only one passport");
         }
@@ -89,12 +91,20 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
     // @Transactional(propagation = Propagation.MANDATORY)
-    public Employee create(Employee employee) {
+    public Employee create(Employee employee) throws DataIntegrityViolationException {
+
         Set<Address> addresses = employee.getAddresses();
-        for (Address a : addresses) {
-            a.setCountry(employee.getCountry());
-        }
-        return employeeRepository.save(employee);
+        addresses.stream().peek(a -> a.setCountry(employee.getCountry())
+        ).collect(Collectors.toSet());
+
+       try
+       {
+           return employeeRepository.save(employee);
+       }
+       catch (Exception e)
+       {
+           throw new DataIntegrityViolationException("Country cannot be null");
+       }
     }
 
     @Override
@@ -106,107 +116,66 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     public List<Employee> getAll() {
         List<Employee> list = employeeRepository.findAll();
-        List<Employee> resultList = new ArrayList<>();
-        if (!list.isEmpty()) {
-            for (Employee e : list) {
-                if (!e.getDeleted()) {
-                    resultList.add(e);
-                }
-            }
-            if (resultList.isEmpty()) {
-                throw new ListEmptyException();
-            }
+        list = list.stream()
+                .filter(e -> !e.getDeleted())
+                .collect(Collectors.toList());
+        if (list.isEmpty()) {
+            throw new ListEmptyException();
         }
-
-        return resultList;
+        return list;
     }
 
     @Override
     public Page<Employee> getAllWithPagination(Pageable pageable) {
-        log.debug("getAllWithPagination() - start: pageable = {}", pageable);
-        Page<Employee> list = employeeRepository.findAll(pageable);
-        log.debug("getAllWithPagination() - end: list = {}", list);
-        return list;
+        return employeeRepository.findAll(pageable);
     }
 
     @Override
     public Employee getById(Integer id) {
         final var employee = employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        // .orElseThrow(ResourceNotFoundException::new);
         if (employee.getDeleted()) throw new ResourceWasDeletedException();
         return employee;
     }
 
     @Override
-    public Optional<Employee> updateNameById(Integer id, String name) {
-        if (name == null) {
-            return Optional.empty(); // Return an empty Optional if name is null
-        }
-        return employeeRepository.findById(id)
-                .map(entity -> {
-                    entity.setName(name);
-                    return employeeRepository.save(entity);
-                });
-    }
-
-    @Override
-    public Optional<Employee> updateEmailById(Integer id, String email) {
-        if (email == null) {
-            return Optional.empty(); // Return an empty Optional if email is null
-        }
-        return employeeRepository.findById(id)
-                .map(entity -> {
-                    entity.setEmail(email);
-                    return employeeRepository.save(entity);
-                });
-    }
-
-    @Override
-    public Optional<Employee> updateCountryById(Integer id, String country) {
-
-        if (country == null) {
-            return Optional.empty(); // Return an empty Optional if country is null
-        }
-        return employeeRepository.findById(id)
-                .map(entity -> {
-                    entity.setCountry(country);
-                    Set<Address> addresses = entity.getAddresses();
-                    for (Address address : addresses) {
-                        address.setId(address.getId());
-                        address.setAddressHasActive(address.getAddressHasActive());
-                        address.setCountry(entity.getCountry());
-                        address.setCity(address.getCity());
-                        address.setStreet(address.getStreet());
-                    }
-                    return employeeRepository.save(entity);
-                });
-    }
-
-    @Override
-    public Optional<Employee> updateGenderById(Integer id, Gender gender) {
-
-        if (gender == null) {
-            return Optional.empty(); // Return an empty Optional if gender is null
-        }
-        return employeeRepository.findById(id)
-                .map(entity -> {
-                    entity.setGender(gender);
-                    return employeeRepository.save(entity);
-                });
-    }
-
-
-    @Override
+    @Transactional
     public Employee updateById(Integer id, Employee employee) {
         return employeeRepository.findById(id)
                 .map(entity -> {
-                    entity.setName(employee.getName());
-                    entity.setEmail(employee.getEmail());
-                    entity.setCountry(employee.getCountry());
-                    entity.setGender(employee.getGender());
+                    if (isFieldNew(entity.getName(), employee.getName()))
+                        entity.setName(employee.getName());
+                    if (isFieldNew(entity.getEmail(), employee.getEmail()))
+                        entity.setEmail(employee.getEmail());
+                    if (isFieldNew(entity.getGender(), employee.getGender()))
+                        entity.setGender(employee.getGender());
+                    if (isFieldNew(entity.getCountry(), employee.getCountry()))
+                        entity.setCountry(employee.getCountry());
+                    if (!employee.getAddresses().isEmpty()) {
+
+                        for (Address a : employee.getAddresses()) {
+                            Address addresses = entity.getAddresses().iterator().next();
+                            if (a.getCity() == null)
+                                a.setCity(addresses.getCity());
+                            if (a.getCountry() == null)
+                                a.setCountry(addresses.getCountry());
+                            if (a.getStreet() == null)
+                                a.setStreet(addresses.getStreet());
+                        }
+                    }
+                    entity.getAddresses().forEach(address -> address.setAddressHasActive(Boolean.FALSE));
+                    entity.setAddresses(Stream
+                            .concat(entity.getAddresses().stream(),
+                                    employee.getAddresses().stream())
+                            .collect(Collectors.toSet()));
+
                     return employeeRepository.save(entity);
                 })
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public Page<Employee> getActiveAddressesByCountry(String country, Pageable pageable) {
+        return employeeRepository.findAllWhereIsActiveAddressByCountry(country,pageable);
     }
 
     @Override
@@ -216,39 +185,11 @@ public class EmployeeServiceBean implements EmployeeService {
         if (employee.getDeleted()) {
             throw new ResourceWasDeletedException();
         }
-
         employee.setDeleted(true);
         employeeRepository.save(employee);
 
 
     }
-   /* public boolean isValid(Employee employee) {
-        String regex = "^[0-9]{10}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(employee.getPhone());
-        boolean isFound = matcher.find();
-        if (isFound) {
-            System.out.println("Number is valid");
-            return true;
-        } else {
-            System.out.println("Number is invalid");
-            return false;
-        }
-    }*/
-
-    /*public boolean isVodafone(Employee employee) {
-        String regex = "^[0][9][5]{1}[0-9]{7}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(employee.getPhone());
-        boolean isFound = matcher.find();
-        if (isFound) {
-            System.out.println("Number is Vodafone");
-            return true;
-        } else {
-            System.out.println("Number is not Vodafone");
-            return false;
-        }
-    }*/
 
     @Override
     public void removeAll() {
@@ -263,6 +204,7 @@ public class EmployeeServiceBean implements EmployeeService {
         }
     }
 
+    // Oleg's methods \\
     @Override
     public Page<Employee> findByCountryContaining(String country, int page, int size, List<String> sortList, String sortOrder) {
         // create Pageable object using the page, size and sort details
@@ -326,6 +268,7 @@ public class EmployeeServiceBean implements EmployeeService {
         return Optional.of(opt);
     }
 
+    // My methods \\
     @Override
     public List<Employee> filterByCountry(String country) {
         return employeeRepository.findByCountry(country);
@@ -375,12 +318,15 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Employee findEmployeeByEmail(String email) {
-        log.debug("run findEmployeeByEmail");
-        try {
-            return employeeRepository.findEmployeeByEmail(email);
-        } catch (RuntimeException ex) {
-            throw new NonUniqueException();
-        }
+
+        return employeeRepository.findEmployeeByEmail(email)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    // technical methods \\
+
+    private boolean isFieldNew(Object existField, Object newField) {
+        return newField != null && !newField.equals(existField);
     }
 
     public boolean isLowerCase(String str) {
@@ -391,8 +337,36 @@ public class EmployeeServiceBean implements EmployeeService {
         if (str == null || str.isEmpty()) {
             return str;
         }
-
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
+
+
+    /* public boolean isValid(Employee employee) {
+        String regex = "^[0-9]{10}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(employee.getPhone());
+        boolean isFound = matcher.find();
+        if (isFound) {
+            System.out.println("Number is valid");
+            return true;
+        } else {
+            System.out.println("Number is invalid");
+            return false;
+        }
+    }
+
+    public boolean isVodafone(Employee employee) {
+        String regex = "^[0][9][5]{1}[0-9]{7}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(employee.getPhone());
+        boolean isFound = matcher.find();
+        if (isFound) {
+            System.out.println("Number is Vodafone");
+            return true;
+        } else {
+            System.out.println("Number is not Vodafone");
+            return false;
+        }
+    }*/
 
 }

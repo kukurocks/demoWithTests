@@ -6,6 +6,7 @@ import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.dto.PassportReadDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.EmployeeMapper;
+import com.example.demowithtests.util.exception.NonUniqueException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-
 @RestController
 @AllArgsConstructor
 @Slf4j
@@ -29,9 +29,16 @@ public class EmployeeControllerBean implements EmployeeController {
 
 
     @Override
+    public Page<Employee> readActiveAddressesByCountry(String country, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.ASC,"name"));
+        return employeeService.getActiveAddressesByCountry(country,pageable);
+    }
+
+    @Override
     public Employee addEmployeeWorkPlace(Integer empId, Integer wpId) {
 
-        return employeeService.addWorkPlace(empId,wpId);
+        return employeeService.addWorkPlace(empId, wpId);
     }
 
     @Override
@@ -82,17 +89,7 @@ public class EmployeeControllerBean implements EmployeeController {
 
 
     public EmployeeDto refreshEmployee(Integer id, EmployeeDto employeeDto) {
-
-        Employee employee = employeeService.getById(id);
-        Employee updateEmployee = mapper.fromDto(employeeDto);
-
-
-        employeeService.updateGenderById(employee.getId(), updateEmployee.getGender());
-        employeeService.updateCountryById(employee.getId(), updateEmployee.getCountry());
-        employeeService.updateEmailById(employee.getId(), updateEmployee.getEmail());
-        employeeService.updateNameById(employee.getId(), updateEmployee.getName());
-
-        return mapper.toDto(employee);
+        return mapper.toDto(employeeService.updateById(id, mapper.fromDto(employeeDto)));
     }
 
 
@@ -108,7 +105,7 @@ public class EmployeeControllerBean implements EmployeeController {
 
     public Page<Employee> findByCountry(String country,
                                         int page,
-                                       int size,
+                                        int size,
                                         List<String> sortList,
                                         Sort.Direction sortOrder) {
         //Pageable paging = PageRequest.of(page, size);
@@ -139,6 +136,7 @@ public class EmployeeControllerBean implements EmployeeController {
 
         return employeeService.findEmployeeByEmail(email);
     }
+
     public List<EmployeeReadDto> findAllCountry() {
 
         List<Employee> allWithSyntaxError = employeeService.findAllWithSyntaxError();

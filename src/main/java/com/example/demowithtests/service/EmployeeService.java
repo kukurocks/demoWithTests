@@ -31,12 +31,8 @@ public interface EmployeeService {
     Employee getById(Integer id);
 
     Employee updateById(Integer id, Employee plane);
-    Optional<Employee> updateNameById(Integer id, String name);
-    Optional<Employee> updateEmailById(Integer id, String email);
-    Optional<Employee> updateCountryById(Integer id, String country);
-    Optional<Employee> updateGenderById(Integer id, Gender gender);
 
-    void removeById(Integer id);
+   void removeById(Integer id);
 
     void removeAll();
 
@@ -72,6 +68,8 @@ public interface EmployeeService {
     List<Employee> findAllByEmailIsNull();
      List<Employee> findAllWithSyntaxError();
 
-     Employee findEmployeeByEmail(String email);
+    Employee findEmployeeByEmail(String email);
+
+   Page<Employee> getActiveAddressesByCountry(String country, Pageable pageable);
 
 }

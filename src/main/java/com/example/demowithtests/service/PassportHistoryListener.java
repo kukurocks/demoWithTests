@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class PassportHistoryListener {
 
-
     private PassportHistoryService passportHistoryService;
 
     @EventListener(PassportEvent.class)

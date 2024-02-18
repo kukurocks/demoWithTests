@@ -9,11 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     //@Query(value = "SELECT * FROM users", nativeQuery = true)
+
+    @Query("select e from Employee e join e.addresses a where a.addressHasActive = true and a.country = :country")
+    Page<Employee> findAllWhereIsActiveAddressByCountry(String country, Pageable pageable);
 
     @Query(value = "select e from Employee e where e.country =?1")
     List<Employee> findByCountry(String country);
@@ -24,7 +28,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     Employee findByName(String name);
 
-    Employee findEmployeeByEmail(String email);
+   Optional<Employee>  findEmployeeByEmail(String email);
 
     @NonNull
     Page<Employee> findAll(@NonNull Pageable pageable);

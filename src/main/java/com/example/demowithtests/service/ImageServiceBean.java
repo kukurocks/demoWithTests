@@ -48,16 +48,19 @@ public class ImageServiceBean implements ImageService{
 
     @Override
     public byte[] downloadImage(String imageName) {
-        Optional<Image> dbImage = imageRepository.findByName(imageName);
-        return dbImage.map(image -> {
-            try {
-                return ImageUtils.decompressImage(image.getImageData());
-            } catch (DataFormatException | IOException exception) {
-                throw new ContextedRuntimeException("Error downloading an image", exception)
-                        .addContextValue("Image ID",  image.getId())
-                        .addContextValue("Image name", imageName);
-            }
-        }).orElse(null);
+        return imageRepository.findByName(imageName)
+                .map(this::decompressImageOrThrow)
+                .orElse(null);
+    }
+
+    private byte[] decompressImageOrThrow(Image image) {
+        try {
+            return ImageUtils.decompressImage(image.getImageData());
+        } catch (DataFormatException | IOException exception) {
+            throw new ContextedRuntimeException("Error downloading an image", exception)
+                    .addContextValue("Image ID", image.getId())
+                    .addContextValue("Image name", image.getName());
+        }
     }
 
     @Override

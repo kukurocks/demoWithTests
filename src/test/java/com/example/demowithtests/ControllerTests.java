@@ -198,9 +198,9 @@ public class ControllerTests {
         Page<Employee> employeesPage = new PageImpl<>(list);
         Pageable pageable = PageRequest.of(0, 5);
 
-        EmployeeReadDto dto = EmployeeReadDto.builder().build();
-        EmployeeReadDto dtoTwo =  EmployeeReadDto.builder().build();
-        EmployeeReadDto dtoThree = EmployeeReadDto.builder().build();
+        EmployeeReadDto dto = new EmployeeReadDto();
+        EmployeeReadDto dtoTwo = new EmployeeReadDto();
+        EmployeeReadDto dtoThree = new EmployeeReadDto();
 
         when(service.getAllWithPagination(eq(pageable))).thenReturn(employeesPage);
 /*

@@ -14,6 +14,5 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
     @Query(value = "select * from addresses as a where a.employee_id=:id", nativeQuery = true)
     List<Address> findAddressByEmployeeId(Integer id);
 
-    List<Address> findByEmployee(Employee employee);
 
 }

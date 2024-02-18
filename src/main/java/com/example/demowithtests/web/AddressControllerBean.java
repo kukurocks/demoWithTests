@@ -2,7 +2,7 @@ package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.dto.AddressResponseDto;
+import com.example.demowithtests.dto.address.AddressDto;
 import com.example.demowithtests.service.AddressService;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.config.mapstruct.AddressMapper;
@@ -27,15 +27,9 @@ public class AddressControllerBean implements AddressController{
         return addressService.getAddressesByEmployeeId(id);
     }
 
-    @Override
-    public List<Address> findByEmployee(Integer employee) {
-        Employee theEmployee = employeeService.getById(employee);
-        return addressService.findByEmployee(theEmployee);
-    }
-
 
     @Override
-    public List<AddressResponseDto> getAllAddresses() {
+    public List<AddressDto> getAllAddresses() {
        List<Address> addresses = addressService.findAll();
 
         return addresses.stream().map(mapper::toDto).toList();

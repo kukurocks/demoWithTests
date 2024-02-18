@@ -1,7 +1,7 @@
 package com.example.demowithtests.util.config.mapstruct;
 
 import com.example.demowithtests.domain.Address;
-import com.example.demowithtests.dto.AddressResponseDto;
+import com.example.demowithtests.dto.address.AddressDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -10,5 +10,5 @@ public interface AddressMapper {
 
     AddressMapper INSTANCE = Mappers.getMapper(AddressMapper.class);
 
-    AddressResponseDto toDto(Address address);
+    AddressDto toDto(Address address);
 }

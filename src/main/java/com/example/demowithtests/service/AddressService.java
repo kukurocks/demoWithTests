@@ -10,6 +10,5 @@ public interface AddressService {
 
     List<Address> findAll();
 
-    List<Address> findByEmployee(Employee employee);
 
 }

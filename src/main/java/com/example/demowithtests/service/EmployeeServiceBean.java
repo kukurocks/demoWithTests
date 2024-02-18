@@ -91,12 +91,10 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
     // @Transactional(propagation = Propagation.MANDATORY)
-    public Employee create(Employee employee) throws DataIntegrityViolationException {
-
+    public Employee create(Employee employee){
         Set<Address> addresses = employee.getAddresses();
         addresses.stream().peek(a -> a.setCountry(employee.getCountry())
         ).collect(Collectors.toSet());
-
        try
        {
            return employeeRepository.save(employee);

@@ -7,6 +7,7 @@ import com.example.demowithtests.util.annotation.entity.ActivateCustomAnnotation
 import com.example.demowithtests.util.annotation.entity.Name;
 import com.example.demowithtests.util.annotation.entity.ToLowerCase;
 import com.example.demowithtests.util.exception.*;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -91,22 +92,49 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
     // @Transactional(propagation = Propagation.MANDATORY)
-    public Employee create(Employee employee){
+    public Employee create(Employee employee) {
         Set<Address> addresses = employee.getAddresses();
         addresses.stream().peek(a -> a.setCountry(employee.getCountry())
         ).collect(Collectors.toSet());
-       try
-       {
-           return employeeRepository.save(employee);
-       }
-       catch (Exception e)
-       {
-           throw new DataIntegrityViolationException("Country cannot be null");
-       }
+        try {
+            return employeeRepository.save(employee);
+        } catch (Exception e) {
+            throw new DataIntegrityViolationException("Country cannot be null");
+        }
     }
 
+    @Transactional
     @Override
-    public Employee createEM(Employee employee) {
+    public Employee updateEM(Integer updatedEmployeeId) {
+
+        Employee employee = entityManager.find(Employee.class, updatedEmployeeId);
+        Employee oldEmployee = new Employee();
+        oldEmployee.setName(employee.getName());
+
+        entityManager.detach(employee);
+        employee.setName("New Name");
+
+        if (employee.getName().length() > oldEmployee.getName().length()) {
+
+            return entityManager.merge(employee);
+        } else {
+            return employee;
+        }
+    }
+
+    @Transactional
+    @Override
+    public Employee updateBeforeLongTermOperation(Integer updatedEmployeeId) throws InterruptedException {
+        Employee employee = entityManager.find(Employee.class, updatedEmployeeId);
+
+        employee.setName("QuickName");
+        entityManager.flush();
+        entityManager.detach(employee);
+
+        Thread.sleep(30 * 1000);
+
+        employee.setEmail("longterm@gmail.com");
+
         return entityManager.merge(employee);
     }
 
@@ -172,7 +200,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public Page<Employee> getActiveAddressesByCountry(String country, Pageable pageable) {
-        return employeeRepository.findAllWhereIsActiveAddressByCountry(country,pageable);
+        return employeeRepository.findAllWhereIsActiveAddressByCountry(country, pageable);
     }
 
     @Override

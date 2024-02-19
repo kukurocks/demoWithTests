@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,8 @@ public class EmployeeControllerBean implements EmployeeController {
     @Override
     public Page<Employee> readActiveAddressesByCountry(String country, int page, int size) {
 
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.ASC,"name"));
-        return employeeService.getActiveAddressesByCountry(country,pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
+        return employeeService.getActiveAddressesByCountry(country, pageable);
     }
 
     @Override
@@ -58,13 +59,18 @@ public class EmployeeControllerBean implements EmployeeController {
         return EmployeeMapper.INSTANCE.toReadDto(employeeService.create(employee));
     }
 
+    @Override
+    public void saveEmployeeIfNameBigger(Integer employeeId) {
 
-    public void saveEmployee1(Employee employee) {
-
-        employeeService.create(employee);
+        employeeService.updateEM(employeeId);
 
     }
 
+    @Override
+    public void saveQuicklyEmployee(Integer employeeId) throws InterruptedException {
+
+        employeeService.updateBeforeLongTermOperation(employeeId);
+    }
 
     public List<EmployeeReadDto> getAllUsers() {
 
@@ -139,6 +145,7 @@ public class EmployeeControllerBean implements EmployeeController {
 
         return employeeService.findEmployeeByEmail(email);
     }
+
     public List<EmployeeReadDto> findAllCountry() {
 
         List<Employee> allWithSyntaxError = employeeService.findAllWithSyntaxError();

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +52,13 @@ public interface EmployeeController {
             @ApiResponse(responseCode = "409", description = "Employee already exists")})
     EmployeeReadDto saveEmployee(@RequestBody @Valid EmployeeDto requestForSave);
 
-    @PostMapping("/usersS")
+    @PostMapping("/usersS/{employeeId}")
     @ResponseStatus(HttpStatus.CREATED)
-    void saveEmployee1(@RequestBody Employee employee);
+    void saveEmployeeIfNameBigger(@PathVariable Integer employeeId);
+
+    @PostMapping("/users/quickly/{employeeId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    void saveQuicklyEmployee(@PathVariable Integer employeeId) throws InterruptedException;
 
     //get list of users
     @GetMapping("/users")

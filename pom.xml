@@ -128,12 +128,13 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.15</version>
         </dependency>
-        <!-- flyway -->
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>9.3.1</version>
+           <!-- <version>10.7.2</version>-->
         </dependency>
+
         <!-- mapstruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>

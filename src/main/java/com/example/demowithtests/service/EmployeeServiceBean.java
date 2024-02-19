@@ -7,7 +7,6 @@ import com.example.demowithtests.util.annotation.entity.ActivateCustomAnnotation
 import com.example.demowithtests.util.annotation.entity.Name;
 import com.example.demowithtests.util.annotation.entity.ToLowerCase;
 import com.example.demowithtests.util.exception.*;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

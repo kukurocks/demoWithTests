@@ -10,7 +10,7 @@ This reliable Java project offers `five well-defined entities with diverse relat
 leveraging the DTO pattern for efficient data transfer. 
 It boasts seamless database versioning through both `Flyway and Liquibase`, 
 empowering you to choose the optimal solution for your needs. 
-It utilizes `Docker and Docker Compose` for containerized deployment, 
+It utilizes `Docker Compose` for containerized deployment, 
 ensuring consistent and portable environments. 
 Additionally, it handles `email integration and secure file storage`, 
 while providing comprehensive `OpenApi documentation`

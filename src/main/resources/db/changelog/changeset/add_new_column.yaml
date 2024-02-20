@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-column
+      author: Kuksa
+      changes:
+        - addColumn:
+            tableName: users_test
+            columns:
+              - column:
+                  name: address
+                  type: varchar(255)
+                  constraints:
+                   nullable: true
+

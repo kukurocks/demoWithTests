@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: classpath:/db/changelog/changeset/V1.0.0__create_users_table.xml
+  - include:
+      file: classpath:/db/changelog/changeset/change_column_on_users.yaml
+  - include:
+      file: classpath:/db/changelog/changeset/add_new_column.yaml
+

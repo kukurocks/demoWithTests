@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: changeset/V1.0.0__create_users_table.xml
+  - include:
+      file: changeset/change_column_on_users.yaml
+  - include:
+      file: changeset/add_new_column.yaml
+
